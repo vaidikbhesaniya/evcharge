@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client";
 import axios from "axios";
 // import { Toaster } from "react-hot-toast";
 import { BrowserRouter } from "react-router-dom";
-import "react-toastify/dist/ReactToastify.css";
+// import "react-toastify/dist/ReactToastify.css";
 import "./index.css";
 // import { ToastContainer } from "react-toastify";
 import App from "./App";
