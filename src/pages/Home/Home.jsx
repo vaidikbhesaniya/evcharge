@@ -105,9 +105,7 @@ const Home = () => {
                 } else {
                     const popup = new maptilersdk.Popup({
                         offset: 25,
-                    })
-                        .setLngLat([lng, lat])
-                        .setHTML(`<div style="z-index: 1000">${name}</div>`);
+                    }).setLngLat([lng, lat]);
 
                     popup.addTo(map.current);
                 }
