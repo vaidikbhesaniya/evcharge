@@ -11,11 +11,14 @@ import stack from "../../assets/stack.png";
 import SideBar from "../../components/SideBar";
 import { Store } from "../../store/store";
 import car from "../../assets/car.jpg";
+import { useNavigate } from "react-router-dom";
 
 import directiongreen from "../../assets/directionsgreen.png";
 import MapboxDirections from "@mapbox/mapbox-sdk/services/directions";
 const Home = () => {
     const store = Store();
+    const navigate = useNavigate();
+    const station = JSON.parse(localStorage.getItem("stations"));
 
     useEffect(() => {
         async function userdata() {
@@ -25,6 +28,25 @@ const Home = () => {
         userdata();
     }, []);
 
+    useEffect(() => {
+        let offset = 0;
+
+        async function fetchData() {
+            const intervalId = setInterval(() => {
+                if (offset > 10000) {
+                    clearInterval(intervalId); // Clear the interval if offset is greater than 80000
+                    console.log("Offset limit reached, stopping the interval.");
+                    return;
+                }
+                store.getstation(offset);
+                offset += 1000; // Increase offset by 1000 each second
+            }, 1000);
+        }
+        console.log(store.stations);
+
+        fetchData();
+    }, []);
+
     const themes = [
         "https://api.maptiler.com/maps/basic-v2/style.json?key=x9tTEIbwIYbxGoCgqPmb",
         "https://api.maptiler.com/maps/2269bc1b-be22-4ba7-bccf-f3643b97ed7c/style.json?key=x9tTEIbwIYbxGoCgqPmb",
@@ -32,7 +54,7 @@ const Home = () => {
     ];
     const [latitude, setLatitude] = useState(null);
     const [longitude, setLongitude] = useState(null);
-    const [Mapstyle, setMapstyle] = useState(themes[0]);
+    const [Mapstyle, setMapstyle] = useState(themes[1]);
     const [searchQuery, setSearchQuery] = useState("");
 
     const [searchResults, setSearchResults] = useState([]);
@@ -54,10 +76,10 @@ const Home = () => {
     maptilersdk.config.apiKey = "x9tTEIbwIYbxGoCgqPmb";
 
     const handlesearch = () => {
-        const results = station_data.filter((station) =>
-            station.Station_address?.toLowerCase().includes(
-                searchQuery?.toLowerCase()
-            )
+        const results = station.filter((station) =>
+            station.stationName
+                ?.toLowerCase()
+                .includes(searchQuery?.toLowerCase())
         );
         setSearchResults(results);
     };
@@ -78,7 +100,7 @@ const Home = () => {
         map.current = new maptilersdk.Map({
             container: mapContainer.current,
             style: Mapstyle,
-            center: [longitude, latitude],
+            center: [-89.852801, 33.785742],
             zoom: zoom,
         });
 
@@ -98,18 +120,6 @@ const Home = () => {
                 .setLngLat([lng, lat])
                 .addTo(map.current);
 
-            markerElement.addEventListener("click", () => {
-                setActiveMarker(id === activeMarker ? null : id);
-                if (id === activeMarker) {
-                    map.current.closePopup();
-                } else {
-                    const popup = new maptilersdk.Popup({
-                        offset: 25,
-                    }).setLngLat([lng, lat]);
-
-                    popup.addTo(map.current);
-                }
-            });
             // Add the new marker object to the array
             markers.current.push({ id, markerObject });
         };
@@ -119,22 +129,60 @@ const Home = () => {
             const sw = bounds.getSouthWest();
 
             // Filter station data based on current map bounds
-            const visibleMarkers = station_data.filter((data, index) => {
+            const visibleMarkers = station.filter((data, index) => {
                 return (
-                    data.Log >= sw.lng &&
-                    data.Log <= ne.lng &&
-                    data.Lat >= sw.lat &&
-                    data.Lat <= ne.lat
+                    data.longitude >= sw.lng &&
+                    data.longitude <= ne.lng &&
+                    data.latitude >= sw.lat &&
+                    data.latitude <= ne.lat
                 );
             });
-            console.log("====================================");
-            console.log(searchResults);
-            console.log("====================================");
+            markers.current.forEach((marker) => marker.markerObject.remove());
+            markers.current = [];
             // Add visible markers to the map
             visibleMarkers.forEach((marker, index) => {
-                addMarker(marker.Log, marker.Lat, index, marker.Station_Name);
+                addMarker(
+                    marker.longitude,
+                    marker.latitude,
+                    index,
+                    marker.stationName
+                );
             });
         });
+        return () => {
+            markers.current.forEach((marker) => marker.remove());
+            markers.current = [];
+            if (map.current) {
+                map.current.off("moveend", () => {
+                    const bounds = map.current.getBounds();
+                    const ne = bounds.getNorthEast();
+                    const sw = bounds.getSouthWest();
+
+                    // Filter station data based on current map bounds
+                    const visibleMarkers = station.filter((data, index) => {
+                        return (
+                            data.longitude >= sw.lng &&
+                            data.longitude <= ne.lng &&
+                            data.latitude >= sw.lat &&
+                            data.latitude <= ne.lat
+                        );
+                    });
+                    markers.current.forEach((marker) =>
+                        marker.markerObject.remove()
+                    );
+                    markers.current = [];
+                    // Add visible markers to the map
+                    visibleMarkers.forEach((marker, index) => {
+                        addMarker(
+                            marker.longitude,
+                            marker.latitude,
+                            index,
+                            marker.stationName
+                        );
+                    });
+                });
+            }
+        };
     }, [
         zoom,
         latitude,
@@ -144,15 +192,17 @@ const Home = () => {
         Mapstyle,
         activeMarker,
         searchResults,
+        store.stations,
+        station,
     ]);
     const handleSearchResultClick = (lng, lat) => {
         // Get user's current location
         navigator.geolocation.getCurrentPosition((position) => {
-            const origin = [
-                position.coords.longitude,
-                position.coords.latitude,
-            ];
-
+            // const origin = [
+            //     position.coords.longitude,
+            //     position.coords.latitude,
+            // ];
+            const origin = [-89.852801, 33.785742];
             // if (!isValidCoordinate(lng) || !isValidCoordinate(lat)) {
             //     console.error("Invalid coordinates provided.");
             //     return;
@@ -307,7 +357,13 @@ const Home = () => {
                     />
                 </div>
             </div>
-            <div ref={mapContainer} className="absolute w-full h-[80%]">
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                ref={mapContainer}
+                className="absolute w-full h-[80%]"
+            >
                 <div className="w-full h-[40%] flex justify-center items-center  absolute z-[11] bottom-0">
                     <div
                         id="slider"
@@ -315,13 +371,21 @@ const Home = () => {
                     >
                         {searchResults &&
                             searchResults?.map((item, key) => (
-                                <div
+                                <motion.div
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
                                     key={key}
                                     className="w-[70%] h-[90%] text-white inline-block  cursor-pointer hover:scale-105 ease-in-out duration-300 bg-cosgreen m-2 p-3 rounded-2xl justify-center items-center mt-3"
                                 >
                                     <div className="w-full h-full flex-col flex justify-center items-center">
                                         <div className="w-[95%] h-[70%]  rounded-2xl mb-2 overflow-hidden justify-center items-center flex">
                                             <img
+                                                onClick={() =>
+                                                    navigate(
+                                                        `/station/${item.id}`
+                                                    )
+                                                }
                                                 src={car}
                                                 alt=""
                                                 className="w-[150px]"
@@ -333,10 +397,10 @@ const Home = () => {
                                             "
                                             >
                                                 <p className="">
-                                                    {item.Station_Name}
+                                                    {item.stationName}
                                                 </p>
                                                 <p className=" truncate">
-                                                    {item.Station_address}
+                                                    {item.stationAddress}
                                                 </p>
                                             </div>
                                             <div className="flex flex-col w-[20%] justify-center items-center text-[20px]">
@@ -344,8 +408,8 @@ const Home = () => {
                                                     <img
                                                         onClick={() =>
                                                             handleSearchResultClick(
-                                                                item.Log,
-                                                                item.Lat
+                                                                item.longitude,
+                                                                item.latitude
                                                             )
                                                         }
                                                         src={directiongreen}
@@ -355,11 +419,11 @@ const Home = () => {
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </motion.div>
                             ))}
                     </div>
                 </div>
-            </div>
+            </motion.div>
 
             <Navbar />
         </motion.div>

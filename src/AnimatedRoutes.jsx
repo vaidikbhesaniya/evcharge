@@ -13,6 +13,8 @@ import { Register } from "./pages/Register/Register";
 import Emailverify from "./pages/verifications/Emailverify";
 import { Store } from "./store/store";
 import Profile from "./pages/Profile/Profile";
+import StationDetail from "./pages/StationDetail/StationDetail";
+import AllStations from "./pages/AllStations/AllStations";
 
 export const AnimatedRoutes = () => {
     const store = Store();
@@ -30,7 +32,9 @@ export const AnimatedRoutes = () => {
                 <Route path="/Register" element={<Register />} />
                 <Route path="/UserVerification" element={<Emailverify />} />
                 <Route path="/Login" element={<Login />} />
-                <Route path="/Profile" element={<Profile />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/stations" element={<AllStations />} />
+                <Route path="/station/:stationId" element={<StationDetail />} />
             </Routes>
         </AnimatePresence>
     );

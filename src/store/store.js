@@ -7,7 +7,8 @@ export const Store = create((set) => ({
     setSidebarOpen: (state) => set({ SidebarOpen: state }),
 
     stations: [],
-    setStations: (state) => set({ stations: state }),
+    setStations: (newStations) =>
+        set((state) => ({ stations: [...state.stations, ...newStations] })),
 
     user: undefined,
     setUser: (state) => set({ user: state }),
@@ -126,7 +127,7 @@ export const Store = create((set) => ({
             .get("/api/v1/user")
             .then((res) => {
                 Store.getState().setUser(res.data.user);
-                console.log(Store.getState().user);
+                // console.log(Store.getState().user);
             })
             .catch((err) => {
                 if (err.response)
@@ -151,5 +152,37 @@ export const Store = create((set) => ({
             .finally(() => {
                 // set({ isLoading: false });
             });
+    },
+
+    getstation: async (offset) => {
+        if (offset < 79000) {
+            await axios
+                .get(`/station/${offset}`)
+                .then((res) => {
+                    // toast.success(res.data?.message);
+                    // console.log("====================================");
+                    // console.log(`${offset}`, res.data);
+                    // console.log("====================================");
+                    // Store.getState().setStation(res.data);
+                    // console.log("====================================");
+                    // console.log(Store.getState().stations);
+                    // console.log("====================================");
+                    // Store.getState().setUser(res.data.user);
+                    Store.getState().setStations(res.data);
+                    // console.log(Store.getState().stations);
+
+                    localStorage.setItem(
+                        "stations",
+                        JSON.stringify(Store.getState().stations)
+                    );
+                })
+                .catch((err) => {
+                    if (err.response)
+                        return toast.error(err.response?.data?.message);
+                })
+                .finally(() => {
+                    // set({ isLoading: false });
+                });
+        }
     },
 }));
