@@ -12,8 +12,11 @@ import share from "../assets/sidebar/share.png";
 import profile from "../assets/profile.png";
 import car from "../assets/car.jpg";
 import logout from "../assets/logout.png";
+
+import {useNavigate} from "react-router-dom"
 export default function SideBar() {
     const store = Store();
+    const navigate=useNavigate()
 
     const sidebardata = [
         {
@@ -100,7 +103,7 @@ export default function SideBar() {
                 </div>
 
                 <div className="w-full h-[20%] flex justify-center items-center ">
-                    <div className="w-[60%] h-[50%] shadow-xl bg-red-500 text-white poppins-medium text-2xl m-2 p-2 rounded-xl mr-4 ml-4   justify-center items-center flex">
+                    <div className="w-[60%] h-[50%] shadow-xl bg-red-500 text-white poppins-medium text-2xl m-2 p-2 rounded-xl mr-4 ml-4   justify-center items-center flex cursor-pointer " onClick={()=>store.handlelogout(navigate)}> 
                         <div className="w-[20%] h-full justify-center items-center flex ">
                             <img src={logout} className="w-[25px]" alt="" />
                         </div>

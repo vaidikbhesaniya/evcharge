@@ -185,4 +185,21 @@ export const Store = create((set) => ({
                 });
         }
     },
+
+    handlelogout: async (navigate) => {
+        await axios
+            .post("/api/v1/user/logout")
+            .then((res) => {
+                toast.success(res.data?.message);
+                Cookies.remove("token");
+                navigate("/");
+            })
+            .catch((err) => {
+                if (err.response)
+                    return toast.error(err.response?.data?.message);
+            })
+            .finally(() => {
+                // set({ isLoading: false });
+            });
+    },
 }));

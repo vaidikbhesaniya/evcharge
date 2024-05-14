@@ -11,6 +11,7 @@ import stack from "../../assets/stack.png";
 import SideBar from "../../components/SideBar";
 import { Store } from "../../store/store";
 import car from "../../assets/car.jpg";
+import spin from "../../assets/spin.gif";
 import { useNavigate } from "react-router-dom";
 
 import directiongreen from "../../assets/directionsgreen.png";
@@ -19,7 +20,8 @@ const Home = () => {
     const store = Store();
     const navigate = useNavigate();
     const station = JSON.parse(localStorage.getItem("stations"));
-
+    const [mapLoaded, setMapLoaded] = useState(false);
+    const [loading, setLoading] = useState(true);
     useEffect(() => {
         async function userdata() {
             await store.getUser();
@@ -97,6 +99,7 @@ const Home = () => {
         if (!latitude || !longitude) return;
         if (map.current) return; // stops map from intializing more than once
 
+        setLoading(true);
         map.current = new maptilersdk.Map({
             container: mapContainer.current,
             style: Mapstyle,
@@ -110,7 +113,10 @@ const Home = () => {
         // })
         //     .setLngLat([72.1383226, 21.7621129])
         //     .addTo(map.current);
-
+        map.current.on("load", () => {
+            setMapLoaded(true);
+            setLoading(false); // Hide loader when map is loaded
+        });
         const addMarker = (lng, lat, id, name) => {
             const markerElement = createCustomMarkerElement();
             const markerObject = new maptilersdk.Marker({
@@ -182,6 +188,9 @@ const Home = () => {
                     });
                 });
             }
+            console.log("====================================");
+            console.log(loading, mapLoaded);
+            console.log("====================================");
         };
     }, [
         zoom,
@@ -194,6 +203,8 @@ const Home = () => {
         searchResults,
         store.stations,
         station,
+        loading,
+        mapLoaded,
     ]);
     const handleSearchResultClick = (lng, lat) => {
         // Get user's current location
@@ -333,6 +344,11 @@ const Home = () => {
                         placeholder="Search Station"
                         ref={Searchref}
                         type="text"
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                                handlesearch();
+                            }
+                        }}
                         value={searchQuery}
                         onChange={handleSearchInputChange}
                         className="outline-none w-full h-full bg-transparent text-coswhite poppins-medium"
@@ -357,6 +373,7 @@ const Home = () => {
                     />
                 </div>
             </div>
+
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -364,65 +381,79 @@ const Home = () => {
                 ref={mapContainer}
                 className="absolute w-full h-[80%]"
             >
-                <div className="w-full h-[40%] flex justify-center items-center  absolute z-[11] bottom-0">
-                    <div
-                        id="slider"
-                        className="w-full h-full overflow-x-scroll scroll whitespace-nowrap scroll-smooth scrollbar-hide "
+                {loading ? (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.5 }}
+                        className="fixed inset-0 flex items-center justify-center bg-white  z-50"
                     >
-                        {searchResults &&
-                            searchResults?.map((item, key) => (
-                                <motion.div
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    exit={{ opacity: 0 }}
-                                    key={key}
-                                    className="w-[70%] h-[90%] text-white inline-block  cursor-pointer hover:scale-105 ease-in-out duration-300 bg-cosgreen m-2 p-3 rounded-2xl justify-center items-center mt-3"
-                                >
-                                    <div className="w-full h-full flex-col flex justify-center items-center">
-                                        <div className="w-[95%] h-[70%]  rounded-2xl mb-2 overflow-hidden justify-center items-center flex">
-                                            <img
-                                                onClick={() =>
-                                                    navigate(
-                                                        `/station/${item.id}`
-                                                    )
-                                                }
-                                                src={car}
-                                                alt=""
-                                                className="w-[150px]"
-                                            />
-                                        </div>
-                                        <div className="w-[95%] h-[20%]  text-[10px] flex flex-row">
-                                            <div
-                                                className="flex flex-col w-[80%] h-full
-                                            "
-                                            >
-                                                <p className="">
-                                                    {item.stationName}
-                                                </p>
-                                                <p className=" truncate">
-                                                    {item.stationAddress}
-                                                </p>
+                        <div className="loader">
+                            <img src={spin} alt="" />
+                        </div>
+                    </motion.div>
+                ) : (
+                    <div className="w-full h-[40%] flex justify-center items-center  absolute z-[11] bottom-0">
+                        <div
+                            id="slider"
+                            className="w-full h-full overflow-x-scroll scroll whitespace-nowrap scroll-smooth scrollbar-hide "
+                        >
+                            {searchResults &&
+                                searchResults?.map((item, key) => (
+                                    <motion.div
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        exit={{ opacity: 0 }}
+                                        key={key}
+                                        className="w-[70%] h-[90%] text-white inline-block  cursor-pointer hover:scale-105 ease-in-out duration-300 bg-cosgreen m-2 p-3 rounded-2xl justify-center items-center mt-3"
+                                    >
+                                        <div className="w-full h-full flex-col flex justify-center items-center">
+                                            <div className="w-[95%] h-[70%]  rounded-2xl mb-2 overflow-hidden justify-center items-center flex">
+                                                <img
+                                                    onClick={() =>
+                                                        navigate(
+                                                            `/station/${item.id}`
+                                                        )
+                                                    }
+                                                    src={car}
+                                                    alt=""
+                                                    className="w-[150px]"
+                                                />
                                             </div>
-                                            <div className="flex flex-col w-[20%] justify-center items-center text-[20px]">
-                                                <div className="bg-coswhite w-[40px] h-[40px] rounded-full">
-                                                    <img
-                                                        onClick={() =>
-                                                            handleSearchResultClick(
-                                                                item.longitude,
-                                                                item.latitude
-                                                            )
-                                                        }
-                                                        src={directiongreen}
-                                                        alt=""
-                                                    />
+                                            <div className="w-[95%] h-[20%]  text-[10px] flex flex-row">
+                                                <div
+                                                    className="flex flex-col w-[80%] h-full
+                                            "
+                                                >
+                                                    <p className="">
+                                                        {item.stationName}
+                                                    </p>
+                                                    <p className=" truncate">
+                                                        {item.stationAddress}
+                                                    </p>
+                                                </div>
+                                                <div className="flex flex-col w-[20%] justify-center items-center text-[20px]">
+                                                    <div className="bg-coswhite w-[40px] h-[40px] rounded-full">
+                                                        <img
+                                                            onClick={() =>
+                                                                handleSearchResultClick(
+                                                                    item.longitude,
+                                                                    item.latitude
+                                                                )
+                                                            }
+                                                            src={directiongreen}
+                                                            alt=""
+                                                        />
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </motion.div>
-                            ))}
+                                    </motion.div>
+                                ))}
+                        </div>
                     </div>
-                </div>
+                )}
             </motion.div>
 
             <Navbar />
