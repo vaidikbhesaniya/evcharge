@@ -6,6 +6,17 @@ export const Store = create((set) => ({
     SidebarOpen: false,
     setSidebarOpen: (state) => set({ SidebarOpen: state }),
 
+    allstation: false,
+    setallstation: (state) => set({ allstation: state }),
+
+    
+
+    isclickondirection: false,
+    setisclickondirection: (state) => set({ isclickondirection: state }),
+
+    location: [],
+    setlocation: (state) => set({ location: state }),
+
     stations: [],
     setStations: (newStations) =>
         set((state) => ({ stations: [...state.stations, ...newStations] })),
