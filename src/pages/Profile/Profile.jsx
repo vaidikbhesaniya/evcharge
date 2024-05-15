@@ -28,7 +28,7 @@ function Profile() {
     const fileInputRef = useRef(null);
     useEffect(() => {
         async function fetchData() {
-            await store.getUser();
+            await store.getUser(navigate);
         }
         if (store.user === undefined) {
             fetchData();

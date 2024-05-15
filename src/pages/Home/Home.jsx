@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { useRef, useEffect } from "react";
 import * as maptilersdk from "@maptiler/sdk";
@@ -13,18 +13,20 @@ import { Store } from "../../store/store";
 import car from "../../assets/car.jpg";
 import spin from "../../assets/spin.gif";
 import { useNavigate } from "react-router-dom";
-
+import Popup from "../../components/Popup";
 import directiongreen from "../../assets/directionsgreen.png";
 import MapboxDirections from "@mapbox/mapbox-sdk/services/directions";
 const Home = () => {
     const store = Store();
     const navigate = useNavigate();
     const station = JSON.parse(localStorage.getItem("stations"));
+
+    // const [stationsall, setstationsall] = useState();
     const [mapLoaded, setMapLoaded] = useState(false);
     const [loading, setLoading] = useState(true);
     useEffect(() => {
         async function userdata() {
-            await store.getUser();
+            await store.getUser(navigate);
         }
 
         userdata();
@@ -35,16 +37,18 @@ const Home = () => {
 
         async function fetchData() {
             const intervalId = setInterval(() => {
-                if (offset > 10000) {
+                if (offset > 8000) {
                     clearInterval(intervalId); // Clear the interval if offset is greater than 80000
                     console.log("Offset limit reached, stopping the interval.");
                     return;
                 }
                 store.getstation(offset);
                 offset += 1000; // Increase offset by 1000 each second
+
+                // console.log(store.stations);
             }, 1000);
+            // setstationsall(store.stations);
         }
-        console.log(store.stations);
 
         fetchData();
     }, []);
@@ -58,7 +62,7 @@ const Home = () => {
     const [longitude, setLongitude] = useState(null);
     const [Mapstyle, setMapstyle] = useState(themes[1]);
     const [searchQuery, setSearchQuery] = useState("");
-
+    const [selectedStation, setSelectedStation] = useState(null);
     const [searchResults, setSearchResults] = useState([]);
     const [isactivesearch, setisactivesearch] = useState(false);
     const [activeMarker, setActiveMarker] = useState(null);
@@ -117,7 +121,7 @@ const Home = () => {
             setMapLoaded(true);
             setLoading(false); // Hide loader when map is loaded
         });
-        const addMarker = (lng, lat, id, name) => {
+        const addMarker = (lng, lat, id, markerid) => {
             const markerElement = createCustomMarkerElement();
             const markerObject = new maptilersdk.Marker({
                 element: markerElement,
@@ -128,6 +132,10 @@ const Home = () => {
 
             // Add the new marker object to the array
             markers.current.push({ id, markerObject });
+            markerElement.addEventListener("click", () => {
+                console.log(`hello ${markerid}`);
+                setSelectedStation(station.find((s) => s.id === markerid));
+            });
         };
         map.current.on("moveend", () => {
             const bounds = map.current.getBounds();
@@ -135,7 +143,7 @@ const Home = () => {
             const sw = bounds.getSouthWest();
 
             // Filter station data based on current map bounds
-            const visibleMarkers = station.filter((data, index) => {
+            const visibleMarkers = station?.filter((data, index) => {
                 return (
                     data.longitude >= sw.lng &&
                     data.longitude <= ne.lng &&
@@ -147,12 +155,7 @@ const Home = () => {
             markers.current = [];
             // Add visible markers to the map
             visibleMarkers.forEach((marker, index) => {
-                addMarker(
-                    marker.longitude,
-                    marker.latitude,
-                    index,
-                    marker.stationName
-                );
+                addMarker(marker.longitude, marker.latitude, index, marker.id);
             });
         });
         return () => {
@@ -183,14 +186,11 @@ const Home = () => {
                             marker.longitude,
                             marker.latitude,
                             index,
-                            marker.stationName
+                            marker.id
                         );
                     });
                 });
             }
-            console.log("====================================");
-            console.log(loading, mapLoaded);
-            console.log("====================================");
         };
     }, [
         zoom,
@@ -394,7 +394,11 @@ const Home = () => {
                         </div>
                     </motion.div>
                 ) : (
-                    <div className="w-full h-[40%] flex justify-center items-center  absolute z-[11] bottom-0">
+                    <div
+                        className={`w-full h-[40%] flex justify-center items-center ${
+                            searchResults ? "z-[11]" : "z-[-11]"
+                        }  `}
+                    >
                         <div
                             id="slider"
                             className="w-full h-full overflow-x-scroll scroll whitespace-nowrap scroll-smooth scrollbar-hide "
@@ -453,6 +457,15 @@ const Home = () => {
                                 ))}
                         </div>
                     </div>
+                )}
+
+                {selectedStation && (
+                    <AnimatePresence>
+                        <Popup
+                            station={selectedStation}
+                            onClose={() => setSelectedStation(null)}
+                        />
+                    </AnimatePresence>
                 )}
             </motion.div>
 

@@ -6,10 +6,11 @@ import Bookmark from "../assets/Bookmark.png";
 import mapgreen from "../assets/mapgreen.png";
 import profile from "../assets/profile.png";
 import plus from "../assets/plus.png";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Store } from "../store/store";
 function Navbar() {
     const store = Store();
+    const navigate = useNavigate();
     const nav = [
         {
             name: "Map",
@@ -32,7 +33,7 @@ function Navbar() {
             path: "/Profile",
             img: profile,
             onclick: async () => {
-                await store.getUser();
+                await store.getUser(navigate);
             },
         },
     ];

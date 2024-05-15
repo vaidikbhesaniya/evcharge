@@ -3,7 +3,18 @@ import { Link } from "react-router-dom";
 import carcharge from "../assets/charging.png";
 import map from "../assets/map.png";
 import { motion } from "framer-motion";
+import { Store } from "../store/store";
+import { useEffect } from "react";
 const LandingPage = () => {
+    // const store = Store();
+
+    // useEffect(() => {
+    //     async function fetchData() {
+    //         await store.handleallstations();
+    //     }
+    //     fetchData();
+    // }, []);
+
     return (
         <motion.div
             className="bg-primary w-screen h-[100dvh]"

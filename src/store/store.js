@@ -120,22 +120,25 @@ export const Store = create((set) => ({
             });
     },
 
-    getUser: async () => {
+    getUser: async (navigate) => {
         const { user } = Store.getState();
 
-        await axios
-            .get("/api/v1/user")
-            .then((res) => {
-                Store.getState().setUser(res.data.user);
-                // console.log(Store.getState().user);
-            })
-            .catch((err) => {
-                if (err.response)
-                    return toast.error(err.response?.data?.message);
-            })
-            .finally(() => {
-                // set({ isLoading: false });
-            });
+        if (user == undefined) {
+            await axios
+                .get("/api/v1/user")
+                .then((res) => {
+                    Store.getState().setUser(res.data.user);
+                    // console.log(Store.getState().user);
+                })
+                .catch((err) => {
+                    navigate("/");
+                    if (err.response)
+                        return toast.error(err.response?.data?.message);
+                })
+                .finally(() => {
+                    // set({ isLoading: false });
+                });
+        }
     },
 
     updateUser: async (formData) => {
@@ -175,6 +178,7 @@ export const Store = create((set) => ({
                         "stations",
                         JSON.stringify(Store.getState().stations)
                     );
+                    // console.log(offset);
                 })
                 .catch((err) => {
                     if (err.response)
@@ -184,6 +188,22 @@ export const Store = create((set) => ({
                     // set({ isLoading: false });
                 });
         }
+    },
+
+    handleallstations: async () => {
+        console.log("request trigger");
+        await axios
+            .get(`/stationall`)
+            .then((res) => {
+                localStorage.setItem("stationsall", JSON.stringify(res.data));
+            })
+            .catch((err) => {
+                if (err.response)
+                    return toast.error(err.response?.data?.message);
+            })
+            .finally(() => {
+                console.log("request complated");
+            });
     },
 
     handlelogout: async (navigate) => {
