@@ -15,6 +15,7 @@ import { Store } from "./store/store";
 import Profile from "./pages/Profile/Profile";
 import StationDetail from "./pages/StationDetail/StationDetail";
 import AllStations from "./pages/AllStations/AllStations";
+import Bookmark from "./pages/Bookmark/Bookmark";
 
 export const AnimatedRoutes = () => {
     const store = Store();
@@ -35,6 +36,7 @@ export const AnimatedRoutes = () => {
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/stations" element={<AllStations />} />
                 <Route path="/station/:stationId" element={<StationDetail />} />
+                <Route path="/bookmark" element={<Bookmark />} />
             </Routes>
         </AnimatePresence>
     );

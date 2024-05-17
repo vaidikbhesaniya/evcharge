@@ -134,20 +134,20 @@ const Home = () => {
                 : { lng: null, lat: null };
             // console.log("Clicked location - Latitude:", lat, "Longitude:", lng);
 
-            fetch(
-                `https://api.opencagedata.com/geocode/v1/json?q=${lat},${lng}&language=en&key=3efee4f8b54a4c238c687e26d26a0db4`
-            )
-                .then((response) => response.json())
-                .then((data) => {
-                    // console.log(data);
-                    setselectedArea(data.results[0]);
-                    // if (data.status.code == 200 && data.results.length > 0) {
-                    //     console.log(data.results[0].formatted);
-                    // }
-                })
-                .catch((error) => {
-                    console.error("Error:", error);
-                });
+            // fetch(
+            //     `https://api.opencagedata.com/geocode/v1/json?q=${lat},${lng}&language=en&key=3efee4f8b54a4c238c687e26d26a0db4`
+            // )
+            //     .then((response) => response.json())
+            //     .then((data) => {
+            //         // console.log(data);
+            //         setselectedArea(data.results[0]);
+            //         // if (data.status.code == 200 && data.results.length > 0) {
+            //         //     console.log(data.results[0].formatted);
+            //         // }
+            //     })
+            //     .catch((error) => {
+            //         console.error("Error:", error);
+            //     });
         };
 
         mapContainer.current.addEventListener("click", handleMapClick);
@@ -400,7 +400,9 @@ const Home = () => {
         return nearbyStations;
     }
     // const origin = [-89.852801, 33.785742];
-    const top10 = top10NearbyStations(33.885742, -89.852801, station);
+    const top10 = station
+        ? top10NearbyStations(33.885742, -89.852801, station)
+        : null;
     // console.log("====================================");
     // console.log(top10NearbyStations(33.885742, -89.852801, stations));
     // console.log("====================================");
@@ -447,66 +449,67 @@ const Home = () => {
                             id="slider"
                             className="w-full h-[90%] overflow-x-scroll scroll whitespace-nowrap scroll-smooth scrollbar-hide "
                         >
-                            {top10?.map((item, key) => (
-                                <motion.div
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    exit={{ opacity: 0 }}
-                                    key={key}
-                                    className="w-[70%] h-[90%] text-white inline-block  cursor-pointer hover:scale-105 ease-in-out duration-300 bg-cosgreen m-2 p-3 rounded-2xl justify-center items-center mt-3"
-                                >
-                                    <div className="w-full h-full flex-col flex justify-center items-center">
-                                        <div className="w-[95%] h-[70%]  rounded-2xl mb-2 overflow-hidden justify-center items-center flex">
-                                            <img
-                                                onClick={() =>
-                                                    navigate(
-                                                        `/station/${item?.id}`
-                                                    )
-                                                }
-                                                src={car}
-                                                alt=""
-                                                className="w-[150px]"
-                                            />
-                                        </div>
-                                        <div className="w-[95%] h-[20%]  text-[10px] flex flex-row">
-                                            <div
-                                                className="flex flex-col w-[80%] h-full
-                                            "
-                                            >
-                                                <p className="">
-                                                    {item?.stationName}
-                                                </p>
-                                                <p className=" truncate">
-                                                    {item?.stationAddress}
-                                                </p>
+                            {station &&
+                                top10?.map((item, key) => (
+                                    <motion.div
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        exit={{ opacity: 0 }}
+                                        key={key}
+                                        className="w-[70%] h-[90%] text-white inline-block  cursor-pointer hover:scale-105 ease-in-out duration-300 bg-cosgreen m-2 p-3 rounded-2xl justify-center items-center mt-3"
+                                    >
+                                        <div className="w-full h-full flex-col flex justify-center items-center">
+                                            <div className="w-[95%] h-[70%]  rounded-2xl mb-2 overflow-hidden justify-center items-center flex">
+                                                <img
+                                                    onClick={() =>
+                                                        navigate(
+                                                            `/station/${item?.id}`
+                                                        )
+                                                    }
+                                                    src={car}
+                                                    alt=""
+                                                    className="w-[150px]"
+                                                />
                                             </div>
-                                            <div className="flex flex-col w-[20%] justify-center items-center text-[20px]">
-                                                <div className="bg-coswhite w-[40px] h-[40px] rounded-full">
-                                                    <img
-                                                        onClick={() => {
-                                                            // handleClickDirection();
-                                                            store.setallstation(
-                                                                !store.allstation
-                                                            );
-                                                            handleSearchResultClick(
-                                                                item.longitude,
-                                                                item.latitude
-                                                            );
+                                            <div className="w-[95%] h-[20%]  text-[10px] flex flex-row">
+                                                <div
+                                                    className="flex flex-col w-[80%] h-full
+                                            "
+                                                >
+                                                    <p className="">
+                                                        {item?.stationName}
+                                                    </p>
+                                                    <p className=" truncate">
+                                                        {item?.stationAddress}
+                                                    </p>
+                                                </div>
+                                                <div className="flex flex-col w-[20%] justify-center items-center text-[20px]">
+                                                    <div className="bg-coswhite w-[40px] h-[40px] rounded-full">
+                                                        <img
+                                                            onClick={() => {
+                                                                // handleClickDirection();
+                                                                store.setallstation(
+                                                                    !store.allstation
+                                                                );
+                                                                handleSearchResultClick(
+                                                                    item.longitude,
+                                                                    item.latitude
+                                                                );
 
-                                                            // store.setlocation([
-                                                            //     item.latitude,
-                                                            //     item.longitude,
-                                                            // ]);
-                                                        }}
-                                                        src={directiongreen}
-                                                        alt=""
-                                                    />
+                                                                // store.setlocation([
+                                                                //     item.latitude,
+                                                                //     item.longitude,
+                                                                // ]);
+                                                            }}
+                                                            src={directiongreen}
+                                                            alt=""
+                                                        />
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </motion.div>
-                            ))}
+                                    </motion.div>
+                                ))}
                         </div>
                     </div>
 

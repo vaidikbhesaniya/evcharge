@@ -5,6 +5,7 @@ import chat from "../assets/chat.png";
 import Bookmark from "../assets/Bookmark.png";
 import mapgreen from "../assets/mapgreen.png";
 import profile from "../assets/profile.png";
+import { useEffect } from "react";
 import plus from "../assets/plus.png";
 import { Link, useNavigate } from "react-router-dom";
 import { Store } from "../store/store";
@@ -37,6 +38,13 @@ function Navbar() {
             },
         },
     ];
+    useEffect(() => {
+        async function fatch() {
+            await store.getbookmark();
+        }
+        fatch();
+    }, []);
+
     return (
         <motion.div
             initial={{ opacity: 0 }}
@@ -46,7 +54,12 @@ function Navbar() {
         >
             {nav.map((item, index) => (
                 <div className="" key={index}>
-                    <Link to={item.path}>
+                    <Link
+                        to={item.path}
+                        onClick={() =>
+                            item.name === "Bookmark " ? store.getbookmark() : ""
+                        }
+                    >
                         <div className="flex justify-center items-center">
                             <img
                                 onClick={item.onclick}

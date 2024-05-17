@@ -16,13 +16,19 @@ import countrypng from "../../assets/stationdetail/country.png";
 import country from "../../assets/stationdetail/country.gif";
 import websitepng from "../../assets/stationdetail/website.png";
 import website from "../../assets/stationdetail/website.gif";
+import { Store } from "../../store/store";
 
 function StationDetail() {
+    const store = Store();
     const { stationId } = useParams();
     const stations = JSON.parse(localStorage.getItem("stations"));
     const station = stations.find(
         (station) => parseInt(station.id) === parseInt(stationId)
     );
+
+    const query = {
+        stationId: parseInt(stationId),
+    };
     console.log("====================================");
     console.log(station);
     console.log("====================================");
@@ -251,9 +257,15 @@ function StationDetail() {
                             </div>
 
                             <div className="w-[100%] h-[15%] ">
-                                <div className="flex justify-center items-center w-[100%] h-[100%]">
-                                    <button className="w-[50%] h-[50%] bg-black text-white rounded-lg flex justify-center items-center poppins-medium">
+                                <div className="flex justify-around items-center w-[100%] h-[100%]">
+                                    <button className="w-[30%] h-[50%] bg-black text-white rounded-lg flex justify-center items-center poppins-medium">
                                         Directions
+                                    </button>
+                                    <button
+                                        className="w-[30%] h-[50%] bg-black text-white rounded-lg flex justify-center items-center poppins-medium"
+                                        onClick={() => store.addbookmark(query)}
+                                    >
+                                        bookmark
                                     </button>
                                 </div>
                             </div>
@@ -299,7 +311,7 @@ function StationDetail() {
                                     />
                                 </div>
                                 <div className="poppins-medium text-[0.8em] text-slate-500 w-[80%] h-[100%] flex ml-2 items-center">
-                                    {station.openTime} Acceptable
+                                    {station.openTime}
                                 </div>
                             </div>
                         </div>

@@ -9,13 +9,14 @@ export const Store = create((set) => ({
     allstation: false,
     setallstation: (state) => set({ allstation: state }),
 
-    
-
     isclickondirection: false,
     setisclickondirection: (state) => set({ isclickondirection: state }),
 
     location: [],
     setlocation: (state) => set({ location: state }),
+
+    bookmarks: false,
+    setbookmarks: (state) => set({ bookmarks: state }),
 
     stations: [],
     setStations: (newStations) =>
@@ -224,6 +225,56 @@ export const Store = create((set) => ({
                 toast.success(res.data?.message);
                 Cookies.remove("token");
                 navigate("/");
+            })
+            .catch((err) => {
+                if (err.response)
+                    return toast.error(err.response?.data?.message);
+            })
+            .finally(() => {
+                // set({ isLoading: false });
+            });
+    },
+
+    addbookmark: async (data) => {
+        await axios
+            .post("/api/v1/bookmark/add", data)
+            .then((res) => {
+                toast.success(res.data?.message);
+            })
+            .catch((err) => {
+                if (err.response)
+                    return toast.error(err.response?.data?.message);
+            })
+            .finally(() => {
+                // set({ isLoading: false });
+            });
+    },
+
+    getbookmark: async () => {
+        await axios
+            .get("/api/v1/bookmarks")
+            .then((res) => {
+                // toast.success("success");
+                Store.getState().setbookmarks(res.data.stations);
+                localStorage.setItem(
+                    "bookmarks",
+                    JSON.stringify(Store.getState().bookmarks)
+                );
+            })
+            .catch((err) => {
+                if (err.response)
+                    return toast.error(err.response?.data?.message);
+            })
+            .finally(() => {
+                // set({ isLoading: false });
+            });
+    },
+
+    removebookmark: async (data) => {
+        await axios
+            .delete("/api/v1/bookmark/remove", data)
+            .then((res) => {
+                toast.success(res.data?.message);
             })
             .catch((err) => {
                 if (err.response)
