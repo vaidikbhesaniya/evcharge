@@ -9,6 +9,7 @@ import name from "../../assets/stationdetail/name.gif";
 import namepng from "../../assets/stationdetail/name.png";
 import state from "../../assets/stationdetail/state.png";
 import opentime from "../../assets/stationdetail/opentime.gif";
+import { useRef } from "react";
 import opentimepng from "../../assets/stationdetail/opentime.png";
 import phonepng from "../../assets/stationdetail/phone.png";
 import phone from "../../assets/stationdetail/phone.gif";
@@ -17,6 +18,8 @@ import country from "../../assets/stationdetail/country.gif";
 import websitepng from "../../assets/stationdetail/website.png";
 import website from "../../assets/stationdetail/website.gif";
 import { Store } from "../../store/store";
+import { ClipLoader } from "react-spinners";
+import { gsap } from "gsap";
 import { useEffect } from "react";
 
 function StationDetail() {
@@ -24,10 +27,16 @@ function StationDetail() {
     const { stationId } = useParams();
     const stations = JSON.parse(localStorage.getItem("stations"));
     const reviews = JSON.parse(localStorage.getItem("reviews"));
+
+    // const photoes = [];
+    const [photoes, setphotoes] = useState([]);
     const station = stations.find(
         (station) => parseInt(station.id) === parseInt(stationId)
     );
     const [reviewinput, setreviewinput] = useState("");
+    const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
+    const photoSliderRef = useRef(null);
+    const [loading, setLoading] = useState(true);
     const query = {
         stationId: parseInt(stationId),
     };
@@ -56,6 +65,19 @@ function StationDetail() {
         fatch();
         console.log(store.user);
     }, []);
+    useEffect(() => {
+        const interval = setInterval(() => {
+            gsap.to(photoSliderRef.current, {
+                x: `-${currentPhotoIndex * 100}%`,
+                duration: 1,
+                ease: "power2.inOut",
+            });
+            setCurrentPhotoIndex((prev) =>
+                prev === photoes.length - 1 ? 0 : prev + 1
+            );
+        }, 4000);
+        return () => clearInterval(interval);
+    }, [currentPhotoIndex, photoes.length]);
 
     const [copySuccess, setCopySuccess] = useState("");
 
@@ -65,6 +87,40 @@ function StationDetail() {
             reviewText: reviewinput,
         });
     };
+
+    useEffect(() => {
+        const location = station.stationName;
+        const url = `https://api.unsplash.com/search/photos?query=${location}&client_id=qmpsLecbihw5wQY9wlV271wgFA9HKO9zOEo8kDAQfWw`;
+        fetch(url)
+            .then((response) => response.json())
+            .then((data) => {
+                // Log the URLs of the first few photos
+                const fetchedPhotos = data.results.map((e) => e.urls.full);
+                setphotoes(fetchedPhotos);
+                setLoading(false);
+            })
+            .catch((error) => {
+                console.error("Error fetching photos:", error);
+                setLoading(false);
+            });
+    }, []);
+
+    useEffect(() => {
+        const preloadedImages = photoes.map((photo) => {
+            const img = new Image();
+            img.src = photo;
+            return img;
+        });
+
+        Promise.all(preloadedImages.map((img) => img.decode()))
+            .then(() => {
+                setLoading(false);
+            })
+            .catch((error) => {
+                console.error("Error preloading images:", error);
+                setLoading(false);
+            });
+    }, [photoes]);
 
     const handledeletereview = async (id) => {
         await store.removereview({
@@ -459,10 +515,50 @@ function StationDetail() {
 
     const tabs = ["overview", "review", "photos", "about"];
     return (
-        <div className="w-[100vw] h-[100dvh] bg-cosgreen">
-            <div className="w-[100vw] h-[35%] bg-cosgreen fixed z-[55]">
-                <div className="poppins-medium  w-[100%]  bg-primary transition-all duration-100 ease-out cursor-pointer  hover:backdrop-opacity-2xl h-[80%] justify-center flex items-center">
-                    No photos Available
+        <div className="w-[100vw] h-[100dvh] bg-white">
+            <div className="w-[100vw] h-[35%] bg-white fixed z-[55]">
+                <div className="photoes poppins-medium  w-[100%]  bg-primary transition-all duration-100 ease-out cursor-pointer  hover:backdrop-opacity-2xl h-[80%] justify-center flex items-center">
+                    <motion.div className="station-image flex flex-col w-[100%] h-[100%]">
+                        <div
+                            className="w-[100%] h-[100%]"
+                            style={{ overflow: "hidden" }}
+                        >
+                            <div
+                                ref={photoSliderRef}
+                                className="slider"
+                                style={{
+                                    display: "flex",
+                                    transition: "transform 1s ease",
+                                }}
+                            >
+                                {photoes.map((photo, index) => (
+                                    <img
+                                        key={index}
+                                        src={photo}
+                                        alt={`Station photo ${index + 1}`}
+                                        className="slider-image"
+                                        style={{
+                                            width: "100%",
+                                            flexShrink: 0,
+                                        }}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+                        {/* <div className="controls">
+                            {photoes.map((_, index) => (
+                                <button
+                                    key={index}
+                                    className={`control-button ${
+                                        currentPhotoIndex === index
+                                            ? "active"
+                                            : ""
+                                    }`}
+                                    onClick={() => setCurrentPhotoIndex(index)}
+                                />
+                            ))}
+                        </div> */}
+                    </motion.div>
                 </div>
                 <div className="h-[2px] w-[100%] bg-white " />
                 <div className="w-[100%] h-[20%] bg-white flex justify-center items-center poppins-light">
