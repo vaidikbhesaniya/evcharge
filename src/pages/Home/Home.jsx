@@ -22,7 +22,21 @@ import opencage from "opencage-api-client";
 const Home = () => {
     const store = Store();
     const navigate = useNavigate();
-    const station = JSON.parse(localStorage.getItem("stations"));
+    const stations = JSON.parse(localStorage.getItem("stations"));
+
+    const filterStations = (stations) => {
+        const uniqueStations = new Map();
+        stations.forEach((station) => {
+            const { latitude, longitude } = station;
+            const key = `${latitude}-${longitude}`;
+            if (!uniqueStations.has(key)) {
+                uniqueStations.set(key, station);
+            }
+        });
+        return Array.from(uniqueStations.values());
+    };
+
+    const station = stations ? filterStations(stations) : null;
 
     // const [stationsall, setstationsall] = useState();
     const [mapLoaded, setMapLoaded] = useState(false);
@@ -40,7 +54,7 @@ const Home = () => {
 
         async function fetchData() {
             const intervalId = setInterval(() => {
-                if (offset > 8000) {
+                if (offset > 1000) {
                     clearInterval(intervalId); // Clear the interval if offset is greater than 80000
                     console.log("Offset limit reached, stopping the interval.");
                     return;

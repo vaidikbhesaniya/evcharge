@@ -2,8 +2,10 @@ import React from "react";
 import { motion } from "framer-motion";
 
 import PropTypes from "prop-types";
+import { useNavigate } from "react-router-dom";
 
 const Popup = ({ station, onClose }) => {
+    const navigate = useNavigate();
     return (
         <motion.div
             id="toggle"
@@ -23,6 +25,9 @@ const Popup = ({ station, onClose }) => {
                         exit={{ opacity: 0, scale: 1 }}
                         transition={{ duration: 0.3 }}
                         className="text-lg font-bold"
+                        onClick={() =>
+                            navigate(`/station/${parseInt(station?.id)}`)
+                        }
                     >
                         {station.stationName}
                     </motion.h3>

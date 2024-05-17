@@ -15,7 +15,10 @@ export const Store = create((set) => ({
     location: [],
     setlocation: (state) => set({ location: state }),
 
-    bookmarks: false,
+    reviews: [],
+    setreviews: (state) => set({ reviews: state }),
+
+    bookmarks: [],
     setbookmarks: (state) => set({ bookmarks: state }),
 
     stations: [],
@@ -275,6 +278,56 @@ export const Store = create((set) => ({
             .delete("/api/v1/bookmark/remove", data)
             .then((res) => {
                 toast.success(res.data?.message);
+            })
+            .catch((err) => {
+                if (err.response)
+                    return toast.error(err.response?.data?.message);
+            })
+            .finally(() => {
+                // set({ isLoading: false });
+            });
+    },
+
+    removereview: async (data) => {
+        await axios
+            .post("/api/v1/review/delete", data)
+            .then((res) => {
+                toast.success(res.data?.message);
+            })
+            .catch((err) => {
+                if (err.response)
+                    return toast.error(err.response?.data?.message);
+            })
+            .finally(() => {
+                // set({ isLoading: false });
+            });
+    },
+    addreview: async (data) => {
+        await axios
+            .post("/api/v1/review/add", data)
+            .then((res) => {
+                toast.success(res.data?.message);
+            })
+            .catch((err) => {
+                if (err.response)
+                    return toast.error(err.response?.data?.message);
+            })
+            .finally(() => {
+                // set({ isLoading: false });
+            });
+    },
+    getreview: async (data) => {
+        await axios
+            .post("/api/v1/reviews", data)
+            .then((res) => {
+                Store.getState().setreviews(res.data);
+                console.log("====================================");
+                console.log(res.data);
+                console.log("====================================");
+                localStorage.setItem(
+                    "reviews",
+                    JSON.stringify(Store.getState().reviews)
+                );
             })
             .catch((err) => {
                 if (err.response)

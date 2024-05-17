@@ -17,21 +17,26 @@ import country from "../../assets/stationdetail/country.gif";
 import websitepng from "../../assets/stationdetail/website.png";
 import website from "../../assets/stationdetail/website.gif";
 import { Store } from "../../store/store";
+import { useEffect } from "react";
 
 function StationDetail() {
     const store = Store();
     const { stationId } = useParams();
     const stations = JSON.parse(localStorage.getItem("stations"));
+    const reviews = JSON.parse(localStorage.getItem("reviews"));
     const station = stations.find(
         (station) => parseInt(station.id) === parseInt(stationId)
     );
-
+    const [reviewinput, setreviewinput] = useState("");
     const query = {
         stationId: parseInt(stationId),
     };
-    console.log("====================================");
-    console.log(station);
-    console.log("====================================");
+    const query2 = {
+        stationId: stationId,
+    };
+    // console.log("====================================");
+    // console.log(station);
+    // console.log("====================================");
 
     const [activeTab, setActiveTab] = useState("overview");
     const [isHovered, setIsHovered] = useState({
@@ -44,8 +49,28 @@ function StationDetail() {
         map: false,
     });
 
+    useEffect(() => {
+        async function fatch() {
+            await store.getreview(query);
+        }
+        fatch();
+        console.log(store.user);
+    }, []);
+
     const [copySuccess, setCopySuccess] = useState("");
 
+    const handlereview = async () => {
+        await store.addreview({
+            stationId: parseInt(stationId),
+            reviewText: reviewinput,
+        });
+    };
+
+    const handledeletereview = async (id) => {
+        await store.removereview({
+            reviewId: parseInt(id),
+        });
+    };
     const handleCopy = (phoneNumber) => {
         navigator.clipboard.writeText(phoneNumber).then(
             () => {
@@ -274,8 +299,118 @@ function StationDetail() {
                 );
             case "review":
                 return (
-                    <motion.div className="justify-center items-center flex w-[100%] h-[100%] ">
-                        No review Available
+                    <motion.div className="justify-center items-center flex w-[100%] h-[100%]">
+                        {reviews.length === 0 ? (
+                            <div className="w-full h-full ">
+                                <div className="w-full h-[90%] poppins-medium flex justify-center items-center">
+                                    No review Available
+                                </div>
+
+                                <div className="w-full fixed bottom-0 h-[10%] bg-white flex items-center justify-center">
+                                    <input
+                                        type="text"
+                                        onChange={(e) =>
+                                            setreviewinput(e.target.value)
+                                        }
+                                        placeholder="Write a review..."
+                                        className="w-[80%] max-w-lg p-2 border bg-white   outline-none rounded-lg shadow   focus:border-transparent"
+                                    />
+                                    <button
+                                        onClick={() => {
+                                            handlereview();
+                                            store.getreview(query);
+                                        }}
+                                        className="w-[20%] h-full bg-blue-700 text-white poppins-medium rounded-l-3xl"
+                                    >
+                                        {" "}
+                                        Submit
+                                    </button>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="w-full h-full ">
+                                <div className="w-full h-[90%] flex flex-col items-center">
+                                    {reviews &&
+                                        reviews?.map((review) => (
+                                            <div
+                                                key={review.id}
+                                                className="border p-4 m-2 w-full max-w-md rounded shadow"
+                                            >
+                                                <div className="flex items-center mb-2">
+                                                    <img
+                                                        src={
+                                                            review.User
+                                                                .profilePicture
+                                                        }
+                                                        alt={
+                                                            review.User.userName
+                                                        }
+                                                        className="w-12 h-12 rounded-full mr-2"
+                                                    />
+                                                    <div>
+                                                        <div className="font-bold">
+                                                            {
+                                                                review.User
+                                                                    .userName
+                                                            }
+                                                        </div>
+                                                        <div className="text-sm text-gray-500">
+                                                            {review.timeAgo}
+                                                        </div>
+                                                    </div>
+                                                    {store.user.id ==
+                                                    review.User.id ? (
+                                                        <div
+                                                            className="cursor-pointer items-end flex justify-end w-[150px] poppins-medium"
+                                                            onClick={() =>
+                                                                handledeletereview(
+                                                                    review.id
+                                                                )
+                                                            }
+                                                        >
+                                                            ×
+                                                        </div>
+                                                    ) : (
+                                                        ""
+                                                    )}
+                                                </div>
+                                                <div className="mb-2">
+                                                    <div className="font-bold">
+                                                        {
+                                                            review.Station
+                                                                .stationName
+                                                        }
+                                                    </div>
+                                                </div>
+                                                <div className="text-gray-700">
+                                                    {review.review}
+                                                </div>
+                                            </div>
+                                        ))}
+                                </div>
+
+                                <div className="w-full fixed bottom-0 h-[10%] bg-white flex items-center justify-center">
+                                    <input
+                                        type="text"
+                                        onChange={(e) =>
+                                            setreviewinput(e.target.value)
+                                        }
+                                        placeholder="Write a review..."
+                                        className="w-[80%] max-w-lg p-2 border bg-white   outline-none rounded-lg shadow   focus:border-transparent"
+                                    />
+                                    <button
+                                        onClick={() => {
+                                            handlereview();
+                                            store.getreview(query);
+                                        }}
+                                        className="w-[20%] h-full bg-blue-700 text-white poppins-medium rounded-l-3xl"
+                                    >
+                                        {" "}
+                                        Submit
+                                    </button>
+                                </div>
+                            </div>
+                        )}
                     </motion.div>
                 );
             case "photos":
@@ -335,7 +470,20 @@ function StationDetail() {
                         <div
                             key={index}
                             className="w-[25%] h-[100%] flex justify-center items-center text-[15px] cursor-pointer"
-                            onClick={() => setActiveTab(tab)}
+                            onClick={() => {
+                                setActiveTab(tab);
+                                tab === "review"
+                                    ? store.getreview(query)
+                                    : null;
+
+                                console.log(
+                                    "===================================="
+                                );
+                                console.log(typeof query.stationId);
+                                console.log(
+                                    "===================================="
+                                );
+                            }}
                         >
                             {tab}
                         </div>
