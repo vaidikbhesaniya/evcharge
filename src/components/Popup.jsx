@@ -12,7 +12,7 @@ const Popup = ({ station, onClose }) => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -50 }}
             transition={{ duration: 0.3 }}
-            className="fixed bottom-0 left-0 w-full bg-white p-4 z-50 shadow-lg"
+            className="fixed bottom-0 left-0 w-full bg-cosgreen p-4 z-50 shadow-lg text-white"
         >
             <div className="flex justify-between items-center">
                 <div>

@@ -4,16 +4,12 @@ import { useEffect, useRef, useState } from "react";
 import { Store } from "../../store/store";
 import { gsap } from "gsap";
 import { useNavigate } from "react-router-dom";
+import { useSwipeable } from "react-swipeable";
+import PropTypes from "prop-types";
 function Bookmark() {
-    // const [bookmarkedStations, setBookmarkedStations] = useState([]);
-    // const cardsRef = useRef([]);
     const navigate = useNavigate();
     const store = Store();
-
-    // const stations = JSON.parse(localStorage.getItem("stations")) || [];
     const bookmarks = JSON.parse(localStorage.getItem("bookmarks")) || [];
-    // setBookmarkedStations(bookmarks);
-    // console.log(bookmarks, bookmarkedStations);
 
     const handleRemoveBookmark = async (stationId) => {
         const query = {
@@ -21,51 +17,19 @@ function Bookmark() {
         };
         await store.removebookmark(query);
         await store.getbookmark();
-        // console.log("====================================");
-        // console.log(stationId);
-        // console.log("====================================");
     };
 
     return (
-        <div className="p-6">
+        <div className="p-6 bg-cosgreen h-screen w-screen">
             {bookmarks.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                <div className="text-white grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                     {bookmarks.map((station, index) => (
-                        <div
+                        <SwipableCard
                             key={station.id}
-                            // ref={(el) => (cardsRef.current[index] = el)}
-                            className="relative bg-white p-6 rounded-lg shadow-lg"
-                        >
-                            <button
-                                onClick={() => handleRemoveBookmark(station.id)}
-                                className="absolute top-2 right-2 text-red-500 hover:text-red-700"
-                            >
-                                &times;
-                            </button>
-
-                            <h3
-                                className="text-xl font-semibold mb-2"
-                                onClick={() =>
-                                    navigate(`/station/${station.id}`)
-                                }
-                            >
-                                {station.stationName}
-                            </h3>
-                            <p className="text-gray-700">
-                                {station.stationAddress}
-                            </p>
-                            {station.latitude && station.longitude && (
-                                <p className="text-gray-500">
-                                    Lat: {station.latitude}, Lon:{" "}
-                                    {station.longitude}
-                                </p>
-                            )}
-                            {station.category && (
-                                <p className="text-gray-500">
-                                    Category: {station.category}
-                                </p>
-                            )}
-                        </div>
+                            station={station}
+                            onRemove={handleRemoveBookmark}
+                            navigate={navigate}
+                        />
                     ))}
                 </div>
             ) : (
@@ -76,5 +40,49 @@ function Bookmark() {
         </div>
     );
 }
+
+const SwipableCard = ({ station, onRemove, navigate }) => {
+    const handlers = useSwipeable({
+        onSwipedLeft: () => onRemove(station.id),
+        preventDefaultTouchmoveEvent: true,
+        trackMouse: true,
+    });
+
+    return (
+        <div
+            {...handlers}
+            className="relative bg-primary p-6 rounded-lg shadow-lg text-white-400"
+        >
+            <button
+                onClick={() => onRemove(station.id)}
+                className="absolute top-2 right-2 text-red-500 hover:text-red-700"
+            >
+                ×
+            </button>
+
+            <h3
+                className="text-xl font-semibold mb-2"
+                onClick={() => navigate(`/station/${station.id}`)}
+            >
+                {station.stationName}
+            </h3>
+            <p className="text-gray-200">{station.stationAddress}</p>
+            {station.latitude && station.longitude && (
+                <p className="text-gray-200">
+                    Lat: {station.latitude}, Lon: {station.longitude}
+                </p>
+            )}
+            {station.category && (
+                <p className="text-gray-200">Category: {station.category}</p>
+            )}
+        </div>
+    );
+};
+
+SwipableCard.propTypes = {
+    station: PropTypes.object.isRequired,
+    onRemove: PropTypes.func.isRequired,
+    navigate: PropTypes.func.isRequired,
+};
 
 export default Bookmark;
