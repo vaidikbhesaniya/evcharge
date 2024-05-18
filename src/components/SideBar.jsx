@@ -9,6 +9,18 @@ import form from "../assets/sidebar/form.png";
 import list from "../assets/sidebar/list.png";
 import rate from "../assets/sidebar/rate.png";
 import share from "../assets/sidebar/share.png";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "../components/ui/alert-dialog";
+
 import profile from "../assets/profile.png";
 import car from "../assets/car.jpg";
 import logout from "../assets/logout.png";
@@ -128,15 +140,35 @@ export default function SideBar() {
                 </div>
 
                 <div className="w-full h-[20%] flex justify-center items-center ">
-                    <div
-                        className="w-[60%] h-[50%] shadow-xl bg-red-500 text-white poppins-medium text-2xl m-2 p-2 rounded-xl mr-4 ml-4   justify-center items-center flex cursor-pointer "
-                        onClick={() => store.handlelogout(navigate)}
-                    >
-                        <div className="w-[20%] h-full justify-center items-center flex ">
-                            <img src={logout} className="w-[25px]" alt="" />
-                        </div>
-                        Log out
-                    </div>
+                    <AlertDialog>
+                        <AlertDialogTrigger className="w-[60%] h-[50%] shadow-xl bg-red-500 text-white poppins-medium text-2xl m-2 p-2 rounded-xl mr-4 ml-4   justify-center items-center flex cursor-pointer ">
+                            <div className="w-[20%] h-full justify-center items-center flex ">
+                                <img src={logout} className="w-[25px]" alt="" />
+                            </div>{" "}
+                            Log out
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>
+                                    Are you absolutely sure?
+                                </AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    This action cannot be undone. This will
+                                    permanently delete your account and remove
+                                    your data from our servers.
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction
+                                    onClick={() => store.handlelogout(navigate)}
+                                >
+                                    {" "}
+                                    Continue
+                                </AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
                 </div>
             </div>
         </motion.div>

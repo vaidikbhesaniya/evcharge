@@ -7,6 +7,7 @@ import Navbar from "../../components/Navbar";
 import mapmarker from "../../assets/mapmarker.png";
 import station_data from "../../data";
 import searchwhite from "../../assets/searchwhite.png";
+
 import stack from "../../assets/stack.png";
 import SideBar from "../../components/SideBar";
 import { Store } from "../../store/store";
@@ -14,10 +15,13 @@ import car from "../../assets/car.jpg";
 import spin from "../../assets/spin.gif";
 import { useNavigate } from "react-router-dom";
 import Popup from "../../components/Popup";
+import gsap from "gsap";
 import directiongreen from "../../assets/directionsgreen.png";
 import AreaPopup from "../../components/AreaPopup";
 import MapboxDirections from "@mapbox/mapbox-sdk/services/directions";
 import opencage from "opencage-api-client";
+import nearby from "../../assets/nearby.png";
+import back from "../../assets/profile/back.png";
 
 const Home = () => {
     const store = Store();
@@ -345,28 +349,28 @@ const Home = () => {
         return markerEl;
     };
 
-    useEffect(() => {
-        // function flyover() {
-        // if (
-        //     store.isclickondirection &&
-        //     store.location.length !== 0 &&
-        //     map.current
-        // ) {
+    // useEffect(() => {
+    //     // function flyover() {
+    //     // if (
+    //     //     store.isclickondirection &&
+    //     //     store.location.length !== 0 &&
+    //     //     map.current
+    //     // ) {
 
-        // }
-        // }
-        const timer = setTimeout(() => {
-            if (map.current) {
-                map.current.flyTo({
-                    center: [-89.852801, 33.785742],
-                    zoom: zoom,
-                });
-            }
-        }, 5000);
+    //     // }
+    //     // }
+    //     const timer = setTimeout(() => {
+    //         if (map.current) {
+    //             map.current.flyTo({
+    //                 center: [-89.852801, 33.785742],
+    //                 zoom: zoom,
+    //             });
+    //         }
+    //     }, 5000);
 
-        // Clear the timer on component unmount
-        return () => clearTimeout(timer);
-    }, [zoom]);
+    //     // Clear the timer on component unmount
+    //     return () => clearTimeout(timer);
+    // }, [zoom]);
 
     function haversine(lat1, lon1, lat2, lon2) {
         const R = 6371.0;
@@ -419,15 +423,42 @@ const Home = () => {
         : null;
     // console.log("====================================");
     // console.log(top10NearbyStations(33.885742, -89.852801, stations));
-    // console.log("====================================");
-    function handleClickDirection() {
-        store.setisclickondirection(true);
-        // Set location after navigating to home
-        navigate("/home");
-        // setTimeout(() => {
-        //     store.setisclickondirection(false);
-        // }, 3000);
-    }
+    // // console.log("====================================");
+    // function handleClickDirection() {
+    //     store.setisclickondirection(true);
+    //     // Set location after navigating to home
+    //     navigate("/home");
+    //     // setTimeout(() => {
+    //     //     store.setisclickondirection(false);
+    //     // }, 3000);
+    // }
+
+    const sliderRef = useRef(null);
+    useEffect(() => {
+        if (!sliderRef.current || !top10) return;
+        const elements = sliderRef.current.querySelectorAll(".slide");
+
+        elements.forEach((element, index) => {
+            gsap.fromTo(
+                element,
+                { scale: 0.8, rotation: 0, opacity: 0 },
+                {
+                    scale: 1,
+                    rotation: 0,
+                    opacity: 1,
+                    duration: 1,
+                    delay: index * 0.2,
+                    ease: "elastic.out(1, 0.5)",
+                    scrollTrigger: {
+                        trigger: element,
+                        start: "top 80%",
+                        toggleActions: "play none none reverse",
+                    },
+                }
+            );
+        });
+    }, [top10]);
+
     useEffect(() => {
         // Function to hide the AreaPopup component after 10 seconds
         const hideAreaPopup = () => {
@@ -452,6 +483,19 @@ const Home = () => {
         >
             {store.allstation && (
                 <div className="w-[100dvw] h-[100dvh] bg-primary fixed z-[1111111]">
+                    <div className="w-full h-[7%] bg-cosgreen flex items-center">
+                        <img
+                            src={back}
+                            alt=""
+                            className="w-[25px] ml-5 cursor-pointer"
+                            onClick={() =>
+                                store.setallstation(!store.allstation)
+                            }
+                        />
+                        <p className="text-white poppins-medium ml-5">
+                            Station Details
+                        </p>
+                    </div>
                     <div className="w-[100dvw] h-[35%] bg-coswhite rounded-b-sm fixed">
                         <div className="w-[100%] h-[10%]">
                             {" "}
@@ -461,19 +505,17 @@ const Home = () => {
                         </div>
                         <div
                             id="slider"
-                            className="w-full h-[90%] overflow-x-scroll scroll whitespace-nowrap scroll-smooth scrollbar-hide "
+                            className="w-full h-[85%] overflow-x-scroll scroll whitespace-nowrap scroll-smooth scrollbar-hide"
+                            ref={sliderRef}
                         >
                             {station &&
                                 top10?.map((item, key) => (
                                     <motion.div
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        exit={{ opacity: 0 }}
                                         key={key}
-                                        className="w-[70%] h-[90%] text-white inline-block  cursor-pointer hover:scale-105 ease-in-out duration-300 bg-cosgreen m-2 p-3 rounded-2xl justify-center items-center mt-3"
+                                        className="slide w-[50%] h-[90%] text-white inline-block cursor-pointer hover:scale-105 ease-in-out duration-300 bg-cosgreen m-2 p-3 rounded-2xl justify-center items-center mt-3"
                                     >
                                         <div className="w-full h-full flex-col flex justify-center items-center">
-                                            <div className="w-[95%] h-[70%]  rounded-2xl mb-2 overflow-hidden justify-center items-center flex">
+                                            <div className="w-[95%] h-[70%] rounded-2xl mb-2 overflow-hidden justify-center items-center flex">
                                                 <img
                                                     onClick={() =>
                                                         navigate(
@@ -485,15 +527,10 @@ const Home = () => {
                                                     className="w-[150px]"
                                                 />
                                             </div>
-                                            <div className="w-[95%] h-[20%]  text-[10px] flex flex-row">
-                                                <div
-                                                    className="flex flex-col w-[80%] h-full
-                                            "
-                                                >
-                                                    <p className="">
-                                                        {item?.stationName}
-                                                    </p>
-                                                    <p className=" truncate">
+                                            <div className="w-[95%] h-[20%] text-[10px] flex flex-row">
+                                                <div className="flex flex-col w-[80%] h-full">
+                                                    <p>{item?.stationName}</p>
+                                                    <p className="truncate">
                                                         {item?.stationAddress}
                                                     </p>
                                                 </div>
@@ -501,7 +538,6 @@ const Home = () => {
                                                     <div className="bg-coswhite w-[40px] h-[40px] rounded-full">
                                                         <img
                                                             onClick={() => {
-                                                                // handleClickDirection();
                                                                 store.setallstation(
                                                                     !store.allstation
                                                                 );
@@ -509,11 +545,6 @@ const Home = () => {
                                                                     item.longitude,
                                                                     item.latitude
                                                                 );
-
-                                                                // store.setlocation([
-                                                                //     item.latitude,
-                                                                //     item.longitude,
-                                                                // ]);
                                                             }}
                                                             src={directiongreen}
                                                             alt=""
@@ -554,8 +585,9 @@ const Home = () => {
                         isactivesearch ? "hidden" : "flex"
                     }`}
                 >
-                    EV Charging Point
+                    EV Pointer
                 </motion.p>
+
                 <motion.div
                     initial={{ scale: isactivesearch ? 0 : 1 }}
                     animate={{ scale: isactivesearch ? 1 : 0 }}
@@ -689,6 +721,14 @@ const Home = () => {
                         </div>
                     </div>
                 )}
+                <div
+                    onClick={() => store.setallstation(!store.allstation)}
+                    className="cursor-pointer shadow-2xl w-[50px] h-[50px] z-[22] absolute flex justify-center items-center  right-0 bottom-8"
+                >
+                    <div className="w-[90%] h-[90%]  bg-white flex justify-center items-center rounded-full">
+                        <img src={nearby} alt="" />
+                    </div>
+                </div>
 
                 {selectedStation && (
                     <AnimatePresence>

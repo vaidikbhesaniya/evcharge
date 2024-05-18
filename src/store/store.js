@@ -144,6 +144,7 @@ export const Store = create((set) => ({
                 .then((res) => {
                     Store.getState().setUser(res.data.user);
                     // console.log(Store.getState().user);
+                    navigate("/home");
                 })
                 .catch((err) => {
                     navigate("/");

@@ -520,7 +520,7 @@ function StationDetail() {
                 <div className="photoes poppins-medium  w-[100%]  bg-primary transition-all duration-100 ease-out cursor-pointer  hover:backdrop-opacity-2xl h-[80%] justify-center flex items-center">
                     <motion.div className="station-image flex flex-col w-[100%] h-[100%]">
                         <div
-                            className="w-[100%] h-[100%]"
+                            className="w-[100%] h-[100%] flex "
                             style={{ overflow: "hidden" }}
                         >
                             <div

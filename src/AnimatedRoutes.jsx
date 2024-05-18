@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
 import { NextLanding } from "./pages/NextLanding";
 import { AnimatePresence } from "framer-motion";
@@ -19,12 +19,25 @@ import Bookmark from "./pages/Bookmark/Bookmark";
 
 export const AnimatedRoutes = () => {
     const store = Store();
+    const navigate = useNavigate();
 
     const location = useLocation();
+    useEffect(() => {
+        // if (store.user) {
+        //     navigate("/home");
+        // }
+        // store.get
+        // console.log(store.user);
+
+        async function datafetch() {
+            await store.getUser(navigate);
+        }
+        datafetch();
+    }, []);
 
     return (
         <AnimatePresence>
-            <Routes location={location} key={location.pathname}>
+            <Routes>
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/pricing" element={<NextLanding />} />
                 <Route path="/Home" element={<Home />} />
