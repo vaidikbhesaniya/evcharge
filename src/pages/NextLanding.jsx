@@ -28,16 +28,12 @@ export const NextLanding = () => {
                         alt=""
                         className="w-[80%] hidden"
                     />
-                    <p className="text-center text-[35px] poppins-medium text-cosgreen font-extrabold costomborder">
-                        <span className="font-extrabold costomborder">
-                            Discover
-                        </span>{" "}
-                        nearby station with{" "}
-                        <span className="dancing-script text-[45px] text-[red]">
-                            ease
-                        </span>{" "}
+                    <p className="text-center text-[35px] poppins-medium text-cosgreen font-extrabold ">
+                        <span className="font-extrabold ">Discover</span> nearby
+                        station with{" "}
+                        <span className="dancing-script text-[45px]">ease</span>{" "}
                         and{" "}
-                        <span className="dancing-script text-[45px] text-[red]">
+                        <span className="dancing-script text-[45px] ">
                             speed
                         </span>
                     </p>
@@ -50,7 +46,7 @@ export const NextLanding = () => {
                         <img src={mapred} alt="" className="w-[40px] " />
                     </div>
                     <div>
-                        <p className="text-[12px] poppins-medium text-white pl-6">
+                        <p className="text-[14px] poppins-medium text-white pl-6">
                             Locating nearby station
                         </p>
                     </div>
@@ -63,7 +59,7 @@ export const NextLanding = () => {
                         </div>
                     </div>
                     <div className="w-[80%]">
-                        <p className="text-[12px] poppins-medium text-white pl-6">
+                        <p className="text-[14px] poppins-medium text-white pl-6">
                             Adding station to your favourites
                         </p>
                     </div>
@@ -75,7 +71,7 @@ export const NextLanding = () => {
                         </div>
                     </div>
                     <div className="w-[80%]">
-                        <p className="text-[12px] poppins-medium text-white pl-6">
+                        <p className="text-[14px] poppins-medium text-white pl-6">
                             Customize station preferences
                         </p>
                     </div>

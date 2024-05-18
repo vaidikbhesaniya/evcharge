@@ -458,7 +458,11 @@ const Home = () => {
             );
         });
     }, [top10]);
+    const [visibleStations, setVisibleStations] = useState(10);
 
+    const loadMore = () => {
+        setVisibleStations((prevVisibleStations) => prevVisibleStations + 10);
+    };
     useEffect(() => {
         // Function to hide the AreaPopup component after 10 seconds
         const hideAreaPopup = () => {
@@ -482,7 +486,7 @@ const Home = () => {
             className=" w-screen h-[100dvh] bg-cosgreen relative"
         >
             {store.allstation && (
-                <div className="w-[100dvw] h-[100dvh] bg-primary fixed z-[1111111]">
+                <div className="w-[100dvw] h-[100dvh] bg-coswhite fixed z-[1111111]">
                     <div className="w-full h-[7%] bg-cosgreen flex items-center">
                         <img
                             src={back}
@@ -558,8 +562,50 @@ const Home = () => {
                         </div>
                     </div>
 
-                    <div className="w-[100%] h-[70%] ">
-                        <div className="w-full h-full "></div>
+                    <div className="w-[100%] h-[60%] absolute top-[42%] ">
+                        <div className="w-full h-full overflow-auto rm">
+                            <div className="container mx-auto p-4">
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                    {stations
+                                        .slice(0, visibleStations)
+                                        .map((station) => (
+                                            <div
+                                                onClick={() =>
+                                                    navigate(
+                                                        `/station/${station.id}`
+                                                    )
+                                                }
+                                                key={station.id}
+                                                className="bg-cosgreen shadow-lg rounded-lg p-4"
+                                            >
+                                                <h3 className="text-xl font-bold mb-2 text-white">
+                                                    {station.stationName}
+                                                </h3>
+                                                <p className="text-white mb-2">
+                                                    {station.stationAddress}
+                                                </p>
+                                                <p className="text-white">
+                                                    Latitude: {station.latitude}
+                                                </p>
+                                                <p className="text-white">
+                                                    Longitude:{" "}
+                                                    {station.longitude}
+                                                </p>
+                                            </div>
+                                        ))}
+                                </div>
+                                {visibleStations < stations.length && (
+                                    <div className="flex justify-center mt-4">
+                                        <button
+                                            onClick={loadMore}
+                                            className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-300"
+                                        >
+                                            Load More
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
                     </div>
                 </div>
             )}

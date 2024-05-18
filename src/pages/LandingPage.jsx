@@ -28,13 +28,10 @@ const LandingPage = () => {
 
             <div className="w-full h-[50%] m-auto">
                 <div className="w-full h-[50%]">
-                    <p className="poppins-medium text-white p-10 text-center ">
+                    <p className="poppins-light text-white p-10 text-center ">
                         {" "}
-                        <span className="dancing-script text-[25px] text-red-700">
-                            Unlock
-                        </span>{" "}
-                        the full potential of your EV charging experience with
-                        our services
+                        <span className="">Unlock</span> the full potential of
+                        your EV charging experience with our services
                     </p>
 
                     <p className="poppins-medium text-green-900 m-5 text-center">

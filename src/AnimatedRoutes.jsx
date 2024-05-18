@@ -2,7 +2,7 @@ import React from "react";
 import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
 import { NextLanding } from "./pages/NextLanding";
-import { AnimatePresence } from "framer-motion";
+// import { AnimatePresence } from "framer-motion";
 import Home from "./pages/Home/Home";
 import MapScreen from "./pages/MapScreen";
 // import Navbar from "./components/Navbar";
@@ -36,21 +36,20 @@ export const AnimatedRoutes = () => {
     }, []);
 
     return (
-        <AnimatePresence>
-            <Routes>
-                <Route path="/" element={<LandingPage />} />
-                <Route path="/pricing" element={<NextLanding />} />
-                <Route path="/Home" element={<Home />} />
-                <Route path="/Search" element={<Home />} />
-                <Route path="/Map" element={<MapScreen />} />
-                <Route path="/Register" element={<Register />} />
-                <Route path="/UserVerification" element={<Emailverify />} />
-                <Route path="/Login" element={<Login />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/stations" element={<AllStations />} />
-                <Route path="/station/:stationId" element={<StationDetail />} />
-                <Route path="/bookmark" element={<Bookmark />} />
-            </Routes>
-        </AnimatePresence>
+        <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/pricing" element={<NextLanding />} />
+            <Route path="/Home" element={<Home />} />
+            <Route path="/Search" element={<Home />} />
+            <Route path="/Map" element={<MapScreen />} />
+            <Route path="/Register" element={<Register />} />
+            <Route path="/UserVerification" element={<Emailverify />} />
+            <Route path="/Login" element={<Login />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/stations" element={<AllStations />} />
+            <Route path="/station/:stationId" element={<StationDetail />} />
+            <Route path="/bookmark" element={<Bookmark />} />
+        </Routes>
+        //
     );
 };
