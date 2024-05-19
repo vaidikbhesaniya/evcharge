@@ -776,7 +776,7 @@ const Home = () => {
                     </div>
                 </div>
 
-                <div
+                {/* <div
                     id="frame"
                     style={{ width: "320px" }}
                     className="absolute flex justify-center items-center z-[22]"
@@ -803,7 +803,7 @@ const Home = () => {
                     >
                         Advertise here
                     </a>
-                </div>
+                </div> */}
 
                 {selectedStation && (
                     <AnimatePresence>
