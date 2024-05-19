@@ -776,7 +776,24 @@ const Home = () => {
                     </div>
                 </div>
 
-               
+                <div
+                    id="frame"
+                    style="width:320px;"
+                    className="absolute flex justify-center items-center z-[22]"
+                >
+                    <iframe
+                        data-aa="2326184"
+                        src="//ad.a-ads.com/2326184?size=320x50"
+                        style="width:320px; height:50px; border:0px; padding:0; overflow:hidden; background-color: transparent;"
+                    ></iframe>
+                    <a
+                        style="display: block; text-align: right; font-size: 12px"
+                        id="preview-link"
+                        href="https://a-ads.com/?partner=2326184"
+                    >
+                        Advertise here
+                    </a>
+                </div>
 
                 {selectedStation && (
                     <AnimatePresence>
