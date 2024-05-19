@@ -776,6 +776,12 @@ const Home = () => {
                     </div>
                 </div>
 
+                <iframe
+                    data-aa="2326184"
+                    src="//ad.a-ads.com/2326184?size=320x50"
+                    style="width:320px; position:absolute bottom:0 z-index:1111 height:50px; border:0px; padding:0; overflow:hidden; background-color: transparent;"
+                ></iframe>
+
                 {selectedStation && (
                     <AnimatePresence>
                         <Popup
