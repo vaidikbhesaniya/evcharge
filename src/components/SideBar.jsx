@@ -53,7 +53,7 @@ export default function SideBar() {
         },
         {
             title: "Share",
-            path: "/Share",
+            path: "/chat",
             icon: share,
         },
         {

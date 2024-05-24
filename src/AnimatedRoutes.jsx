@@ -16,7 +16,7 @@ import Profile from "./pages/Profile/Profile";
 import StationDetail from "./pages/StationDetail/StationDetail";
 import AllStations from "./pages/AllStations/AllStations";
 import Bookmark from "./pages/Bookmark/Bookmark";
-
+import Chat from "./pages/Chat";
 export const AnimatedRoutes = () => {
     const store = Store();
     const navigate = useNavigate();
@@ -49,6 +49,7 @@ export const AnimatedRoutes = () => {
             <Route path="/stations" element={<AllStations />} />
             <Route path="/station/:stationId" element={<StationDetail />} />
             <Route path="/bookmark" element={<Bookmark />} />
+            <Route path="/chat" element={<Chat />}></Route>
         </Routes>
         //
     );
