@@ -174,6 +174,7 @@ export const Store = create((set) => ({
     },
 
     getstation: async (offset) => {
+        
         if (offset < 2100) {
             await axios
                 .get(`/station/${offset}`)
