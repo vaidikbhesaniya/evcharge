@@ -22,6 +22,7 @@ import MapboxDirections from "@mapbox/mapbox-sdk/services/directions";
 import opencage from "opencage-api-client";
 import nearby from "../../assets/nearby.png";
 import back from "../../assets/profile/back.png";
+import petrolmarker from "../../assets/petrolmarker.png";
 
 const Home = () => {
     const store = Store();
@@ -58,7 +59,7 @@ const Home = () => {
 
         async function fetchData() {
             const intervalId = setInterval(() => {
-                if (offset > 1000) {
+                if (offset > 2800) {
                     clearInterval(intervalId); // Clear the interval if offset is greater than 80000
                     console.log("Offset limit reached, stopping the interval.");
                     return;
@@ -93,6 +94,7 @@ const Home = () => {
     const map = useRef(null);
     const Searchref = useRef(null);
     const markers = useRef([]);
+    const fuelmarkers = useRef([]);
     const curLocation = { lng: 72.1378992, lat: 21.7433242 };
     const [zoom] = useState(14);
     const mapboxDirectionsClient = useRef(
@@ -130,6 +132,7 @@ const Home = () => {
             container: mapContainer.current,
             style: Mapstyle,
             center: [-89.852801, 33.785742],
+            // center: [-88.483089, 44.245683],
             zoom: zoom,
         });
 
@@ -169,8 +172,8 @@ const Home = () => {
         };
 
         mapContainer.current.addEventListener("click", handleMapClick);
-        const addMarker = (lng, lat, id, markerid) => {
-            const markerElement = createCustomMarkerElement();
+        const addMarker = (lng, lat, id, markerid, type) => {
+            const markerElement = createCustomMarkerElement(type);
             const markerObject = new maptilersdk.Marker({
                 element: markerElement,
                 anchor: "bottom", // Adjust anchor based on your marker design
@@ -186,6 +189,25 @@ const Home = () => {
                 // setselectedArea(null);
             });
         };
+
+        const fueladdMarker = (lng, lat, id, markerid) => {
+            const markerElement = createCustomfuelMarkerElement();
+            const markerObject = new maptilersdk.Marker({
+                element: markerElement,
+                anchor: "bottom", // Adjust anchor based on your marker design
+            })
+                .setLngLat([lng, lat])
+                .addTo(map.current);
+
+            // Add the new marker object to the array
+            fuelmarkers.current.push({ id, markerObject });
+            markerElement.addEventListener("click", () => {
+                console.log(`hello ${markerid}`);
+                setSelectedStation(station.find((s) => s.id === markerid));
+                // setselectedArea(null);
+            });
+        };
+
         map.current.on("moveend", () => {
             const bounds = map.current.getBounds();
             const ne = bounds.getNorthEast();
@@ -204,7 +226,13 @@ const Home = () => {
             markers.current = [];
             // Add visible markers to the map
             visibleMarkers.forEach((marker, index) => {
-                addMarker(marker.longitude, marker.latitude, index, marker.id);
+                addMarker(
+                    marker.longitude,
+                    marker.latitude,
+                    index,
+                    marker.id,
+                    marker.type
+                );
             });
         });
 
@@ -256,6 +284,15 @@ const Home = () => {
         loading,
         mapLoaded,
     ]);
+
+    const handleremovedirection = () => {
+        // setDirections(null);
+
+        if (map.current.getLayer("route")) {
+            map.current.removeLayer("route");
+            map.current.removeSource("route");
+        }
+    };
     const handleSearchResultClick = (lng, lat) => {
         // Get user's current location
         navigator.geolocation.getCurrentPosition((position) => {
@@ -336,10 +373,30 @@ const Home = () => {
 
     // console.log(store.isclickondirection, store.location);
 
-    const createCustomMarkerElement = () => {
+    const createCustomMarkerElement = (type) => {
         const markerEl = document.createElement("img");
         markerEl.className = "custom-marker";
-        markerEl.src = mapmarker;
+        // markerEl.src = mapmarker;
+        markerEl.style.width = "30px";
+        markerEl.style.height = "30px";
+        markerEl.style.display = "flex";
+        markerEl.style.alignItems = "center";
+        markerEl.style.justifyContent = "center";
+        markerEl.style.backgroundRepeat = "no-repeat";
+
+        if (type === "ev") {
+            markerEl.src = mapmarker; // Use your EV marker image path
+        } else if (type === "cng") {
+            markerEl.src = petrolmarker; // Use your CNG marker image path
+        } else {
+            markerEl.src = mapmarker; // Use your marker image path
+        }
+        return markerEl;
+    };
+    const createCustomfuelMarkerElement = () => {
+        const markerEl = document.createElement("img");
+        markerEl.className = "custom-marker";
+        markerEl.src = petrolmarker;
         markerEl.style.width = "30px";
         markerEl.style.height = "30px";
         markerEl.style.display = "flex";
@@ -809,6 +866,13 @@ const Home = () => {
                     <AnimatePresence>
                         <Popup
                             station={selectedStation}
+                            handledirection={() =>
+                                handleSearchResultClick(
+                                    selectedStation.longitude,
+                                    selectedStation.latitude
+                                )
+                            }
+                            handleremove={() => handleremovedirection()}
                             onClose={() => setSelectedStation(null)}
                         />
                     </AnimatePresence>
