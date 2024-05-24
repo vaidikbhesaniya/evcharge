@@ -25,7 +25,7 @@ import back from "../../assets/profile/back.png";
 import petrolmarker from "../../assets/petrolmarker.png";
 
 const Home = () => {
-    localStorage.removeItem("stations");
+ 
     const store = Store();
     const navigate = useNavigate();
     const stations = JSON.parse(localStorage.getItem("stations"));
