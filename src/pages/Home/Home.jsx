@@ -747,7 +747,7 @@ const Home = () => {
                 ref={mapContainer}
                 className="absolute w-full h-[80%]"
             >
-                {loading ? (
+                {/* {loading ? (
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -759,7 +759,7 @@ const Home = () => {
                             <img src={spin} alt="" />
                         </div>
                     </motion.div>
-                ) : (
+                ) : ( */}
                     <div
                         className={`w-full h-[40%] flex justify-center items-center  absolute bottom-0 ${
                             isactivesearch ? "z-[11]" : "z-[-11]"
@@ -824,7 +824,7 @@ const Home = () => {
                                 ))}
                         </div>
                     </div>
-                )}
+                {/* )} */}
                 <div
                     onClick={() => store.setallstation(!store.allstation)}
                     className="cursor-pointer shadow-2xl w-[50px] h-[50px] z-[22] absolute flex justify-center items-center  right-0 bottom-8"
