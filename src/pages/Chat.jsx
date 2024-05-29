@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Store } from "../store/store";
 import data from "../assets/profile/back.png";
 
-const socket = io("http://localhost:8080");
+const socket = io("https://evcharge-backend.onrender.com");
 
 export default function Chat() {
     const [messages, setMessages] = useState([]);
