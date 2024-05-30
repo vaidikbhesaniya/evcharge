@@ -4,7 +4,7 @@ import station_data from "../../lib/stations";
 
 // import React, { useEffect, useState, useRef, useCallback } from "react";
 // import { createRoot } from "react-dom/client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import petrolmarker from "../../assets/petrolmarker.png";
 import mapmarker from "../../assets/mapmarker.png";
@@ -22,6 +22,28 @@ const ForMobile = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const [filteredStations, setFilteredStations] = useState(station_data);
     const store = Store();
+    0;
+
+    useEffect(() => {
+        let offset = 0;
+
+        async function fetchData() {
+            const intervalId = setInterval(() => {
+                if (offset > 2800) {
+                    clearInterval(intervalId); // Clear the interval if offset is greater than 80000
+                    console.log("Offset limit reached, stopping the interval.");
+                    return;
+                }
+                store.getstation(offset);
+                offset += 1000; // Increase offset by 1000 each second
+
+                // console.log(store.stations);
+            }, 1000);
+            // setstationsall(store.stations);
+        }
+
+        fetchData();
+    }, []);
     const getMarkerIcon = (type) => {
         switch (type) {
             case "ev":
