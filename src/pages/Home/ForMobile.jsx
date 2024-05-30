@@ -16,14 +16,6 @@ import {
 
 const ForMobile = () => {
     const navigate = useNavigate();
-    const getMarkerColor = (type) => {
-        if (type === "ev") {
-            return "blue"; // Blue for EV stations
-        } else if (type === "cng") {
-            return "yellow"; // Yellow for CNG stations
-        }
-        return "red"; // Default color for other types
-    };
 
     return (
         <APIProvider
@@ -56,13 +48,6 @@ const ForMobile = () => {
                                     ? station.stationName
                                     : "Station Name Not Found"
                             }
-                            options={{
-                                icon: {
-                                    url: `http://maps.google.com/mapfiles/ms/icons/${getMarkerColor(
-                                        station.type
-                                    )}-dot.png`,
-                                },
-                            }}
                             onClick={() => {
                                 navigate(`/station/${parseInt(station.id)}`);
                             }}
