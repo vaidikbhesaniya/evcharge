@@ -1,5 +1,18 @@
-import { APIProvider, Map } from "@vis.gl/react-google-maps";
+// import { APIProvider, Map, Marker } from "@vis.gl/react-google-maps";
 import Navbar from "../../components/Navbar";
+import station_data from "../../lib/stations";
+
+// import React, { useEffect, useState, useRef, useCallback } from "react";
+// import { createRoot } from "react-dom/client";
+
+import {
+    APIProvider,
+    Map,
+    Marker,
+    AdvancedMarker,
+    Pin,
+} from "@vis.gl/react-google-maps";
+
 const ForMobile = () => (
     <APIProvider
         apiKey={"AIzaSyDIj9ZhXRQX7XsTB14AhZvUcVItytgSYRc"}
@@ -9,7 +22,7 @@ const ForMobile = () => (
             <Map
                 className="w-[100%] h-[90%]"
                 defaultZoom={13}
-                defaultCenter={{ lat: -33.860664, lng: 151.208138 }}
+                defaultCenter={{ lat: 29.860664, lng: -84.208138 }}
                 onCameraChanged={(ev) =>
                     console.log(
                         "camera changed:",
@@ -18,7 +31,17 @@ const ForMobile = () => (
                         ev.detail.zoom
                     )
                 }
-            />
+            >
+                {station_data.map((station, index) => (
+                    <Marker
+                        key={index}
+                        position={{
+                            lat: parseFloat(station.latitude),
+                            lng: parseFloat(station.longitude),
+                        }}
+                    ></Marker>
+                ))}
+            </Map>
             <Navbar />
         </div>
     </APIProvider>
