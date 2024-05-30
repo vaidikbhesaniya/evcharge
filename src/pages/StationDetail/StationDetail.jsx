@@ -21,8 +21,11 @@ import { Store } from "../../store/store";
 import { ClipLoader } from "react-spinners";
 import { gsap } from "gsap";
 import { useEffect } from "react";
+import back from "../../assets/profile/back.png";
+import { useNavigate } from "react-router-dom";
 
 function StationDetail() {
+    const navigate = useNavigate();
     const store = Store();
     const { stationId } = useParams();
     const stations = JSON.parse(localStorage.getItem("stations"));
@@ -523,6 +526,12 @@ function StationDetail() {
                             className="w-[100%] h-[100%] flex "
                             style={{ overflow: "hidden" }}
                         >
+                            <img
+                                onClick={() => navigate("/home")}
+                                src={back}
+                                className="absolute z-[1111] w-[40px] m-3"
+                                alt=""
+                            />
                             <div
                                 ref={photoSliderRef}
                                 className="slider"
