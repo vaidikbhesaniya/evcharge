@@ -9,6 +9,9 @@ export const Store = create((set) => ({
     allstation: false,
     setallstation: (state) => set({ allstation: state }),
 
+    issearch: false,
+    setissearch: (state) => set({ issearch: state }),
+
     isclickondirection: false,
     setisclickondirection: (state) => set({ isclickondirection: state }),
 
@@ -174,7 +177,6 @@ export const Store = create((set) => ({
     },
 
     getstation: async (offset) => {
-        
         if (offset < 2100) {
             await axios
                 .get(`/station/${offset}`)

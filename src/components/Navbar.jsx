@@ -52,15 +52,13 @@ function Navbar() {
             exit={{ opacity: 0 }}
             className="w-full h-[10%] rounded-t-sm bg-white flex flex-row justify-around items-center    bottom-0"
         >
-            {nav.map((item, index) => (
-                <div className="" key={index}>
-                    <Link
-                        to={item.path}
-                        onClick={() =>
-                            item.name === "Bookmark " ? store.getbookmark() : ""
-                        }
-                    >
-                        <div className="flex justify-center items-center">
+            {nav.map((item, index) =>
+                item.name === "Search" ? (
+                    <div className="" key={index}>
+                        <div
+                            className="flex justify-center items-center"
+                            onClick={() => store.setissearch(!store.issearch)}
+                        >
                             <img
                                 onClick={item.onclick}
                                 src={item.img}
@@ -72,12 +70,40 @@ function Navbar() {
                                 alt=""
                             />
                         </div>
-                    </Link>
-                    <div className="flex justify-center items-center text-cosgreen poppins-medium text-[12px]">
-                        {item.name === "Plus" ? "" : item.name}
+
+                        <div className="flex justify-center items-center text-cosgreen poppins-medium text-[12px]">
+                            {item.name === "Plus" ? "" : item.name}
+                        </div>
                     </div>
-                </div>
-            ))}
+                ) : (
+                    <div className="" key={index}>
+                        <Link
+                            to={item.path}
+                            onClick={() =>
+                                item.name === "Bookmark "
+                                    ? store.getbookmark()
+                                    : ""
+                            }
+                        >
+                            <div className="flex justify-center items-center">
+                                <img
+                                    onClick={item.onclick}
+                                    src={item.img}
+                                    className={` ${
+                                        item.name === "Plus"
+                                            ? "w-[59px] "
+                                            : "w-[30px]"
+                                    }`}
+                                    alt=""
+                                />
+                            </div>
+                        </Link>
+                        <div className="flex justify-center items-center text-cosgreen poppins-medium text-[12px]">
+                            {item.name === "Plus" ? "" : item.name}
+                        </div>
+                    </div>
+                )
+            )}
         </motion.div>
     );
 }
