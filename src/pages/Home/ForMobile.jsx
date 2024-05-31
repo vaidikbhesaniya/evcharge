@@ -23,6 +23,7 @@ import { Store } from "../../store/store";
 
 const ForMobile = () => {
     const navigate = useNavigate();
+    const evStations = station_data.filter((station) => station.type === "ev");
     const [searchQuery, setSearchQuery] = useState("");
     const [filteredStations, setFilteredStations] = useState(station_data);
     const handlesearch = () => {
@@ -180,7 +181,7 @@ const ForMobile = () => {
                         )
                     }
                 >
-                    {station_data
+                    {evStations
                         .filter((station) =>
                             station.stationName
                                 .toLowerCase()
