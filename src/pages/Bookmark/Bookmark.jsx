@@ -6,6 +6,7 @@ import { gsap } from "gsap";
 import { useNavigate } from "react-router-dom";
 import { useSwipeable } from "react-swipeable";
 import PropTypes from "prop-types";
+import Navbar from "../../components/Navbar";
 function Bookmark() {
     const navigate = useNavigate();
     const store = Store();
@@ -20,23 +21,26 @@ function Bookmark() {
     };
 
     return (
-        <div className="p-6 bg-cosgreen h-screen w-screen">
-            {bookmarks.length > 0 ? (
-                <div className="text-white grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                    {bookmarks.map((station, index) => (
-                        <SwipableCard
-                            key={station.id}
-                            station={station}
-                            onRemove={handleRemoveBookmark}
-                            navigate={navigate}
-                        />
-                    ))}
-                </div>
-            ) : (
-                <p className="text-gray-700">
-                    No bookmarked stations available.
-                </p>
-            )}
+        <div className=" bg-cosgreen h-screen w-screen ">
+            <div className="w-[100%] h-[90%]">
+                {bookmarks.length > 0 ? (
+                    <div className="text-white grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                        {bookmarks.map((station, index) => (
+                            <SwipableCard
+                                key={station.id}
+                                station={station}
+                                onRemove={handleRemoveBookmark}
+                                navigate={navigate}
+                            />
+                        ))}
+                    </div>
+                ) : (
+                    <div className="text-white poppins-medium w-[100%] h-[90%] flex justify-center items-center ">
+                        No bookmarked stations available.
+                    </div>
+                )}
+            </div>
+            <Navbar />
         </div>
     );
 }

@@ -15,7 +15,7 @@ function Navbar() {
     const nav = [
         {
             name: "Map",
-            path: "/Map",
+            path: "/Home",
             img: mapgreen,
         },
         {
@@ -50,7 +50,7 @@ function Navbar() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="w-full h-[10%] rounded-t-sm bg-white flex flex-row justify-around items-center    bottom-0"
+            className="w-full h-[10%] rounded-t-sm bg-primary flex flex-row justify-around items-center    bottom-0"
         >
             {nav.map((item, index) =>
                 item.name === "Search" ? (

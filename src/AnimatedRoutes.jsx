@@ -41,8 +41,8 @@ export const AnimatedRoutes = () => {
             <Route path="/" element={<LandingPage />} />
             <Route path="/pricing" element={<NextLanding />} />
             <Route path="/Home" element={<ForMobile />} />
-            <Route path="/Search" element={<Home />} />
-            <Route path="/Map" element={<MapScreen />} />
+            <Route path="/Search" element={<ForMobile />} />
+            <Route path="/Map" element={<ForMobile />} />
             <Route path="/Register" element={<Register />} />
             <Route path="/UserVerification" element={<Emailverify />} />
             <Route path="/Login" element={<Login />} />

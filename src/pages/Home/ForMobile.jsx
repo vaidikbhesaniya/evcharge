@@ -8,6 +8,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import petrolmarker from "../../assets/petrolmarker.png";
 import mapmarker from "../../assets/mapmarker.png";
+import logo from "../../assets/logo.png";
 import {
     APIProvider,
     Map,
@@ -70,46 +71,51 @@ const ForMobile = () => {
             apiKey={"AIzaSyDIj9ZhXRQX7XsTB14AhZvUcVItytgSYRc"}
             onLoad={() => console.log("Maps API has loaded.")}
         >
-            <div className="w-[100vw] h-[100vh]">
-                {store.issearch && (
-                    <div>
-                        <div className="w-[100vw] h-[7vh] z-[1111]">
-                            <input
-                                className="w-[80%] h-[100%] z-[1111] outline-none"
-                                placeholder="Search for stations..."
-                                value={searchQuery}
-                                onChange={handleSearch}
-                            />
-                            <button className="w-[20%] h-[100%] z-[1111]">
-                                search
-                            </button>
-                        </div>
-                        {store.issearch && searchQuery && (
-                            <div className="absolute  left-0 w-full bg-white z-[1111] max-h-[20%] overflow-y-auto">
-                                {filteredStations.map((station, index) => (
-                                    <div
-                                        key={index}
-                                        className="p-2 border-b cursor-pointer"
-                                        onClick={() => {
-                                            // Center the map on the selected station
-
-                                            navigate(
-                                                `/station/${parseInt(
-                                                    station.id
-                                                )}`
-                                            );
-                                        }}
-                                    >
-                                        {station.stationName}
-                                    </div>
-                                ))}
+            <div className="w-[100vw] h-[100vh] bg-primary">
+                <div>
+                    <div className="w-[100vw] h-[8vh] z-[1111]">
+                        {store.issearch ? (
+                            <div>
+                                <input
+                                    className="w-[80%] h-[100%] bg-primary z-[1111] outline-none"
+                                    placeholder="Search for stations..."
+                                    value={searchQuery}
+                                    onChange={handleSearch}
+                                />
+                                <button className="w-[20%] h-[100%] z-[1111]">
+                                    search
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="w-[100vw] h-[8vh] flex justify-center items-center">
+                                <img src={logo} className="w-[170px]" alt="" />
                             </div>
                         )}
                     </div>
-                )}
+                    {store.issearch && searchQuery && (
+                        <div className="absolute  left-0 w-full bg-white z-[1111] max-h-[20%] overflow-y-auto">
+                            {filteredStations.map((station, index) => (
+                                <div
+                                    key={index}
+                                    className="p-2 border-b cursor-pointer"
+                                    onClick={() => {
+                                        // Center the map on the selected station
+
+                                        navigate(
+                                            `/station/${parseInt(station.id)}`
+                                        );
+                                    }}
+                                >
+                                    {station.stationName}
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+
                 <Map
                     className={`w-[100%]  ${
-                        store.issearch ? "h-[83%]" : "h-[90%]"
+                        store.issearch ? "h-[82%]" : "h-[82%]"
                     }`}
                     defaultZoom={13}
                     defaultCenter={{ lat: 35.362213, lng: -94.375338 }}
