@@ -79,11 +79,11 @@ function Navbar() {
                     <div className="" key={index}>
                         <Link
                             to={item.path}
-                            onClick={() =>
+                            onClick={() => {
                                 item.name === "Bookmark "
                                     ? store.getbookmark()
-                                    : ""
-                            }
+                                    : "";
+                            }}
                         >
                             <div className="flex justify-center items-center">
                                 <img

@@ -27,9 +27,9 @@ const Popup = ({ station, onClose, handledirection, handleremove }) => {
                         exit={{ opacity: 0, scale: 1 }}
                         transition={{ duration: 0.3 }}
                         className="text-lg font-bold"
-                        onClick={() =>
-                            navigate(`/station/${parseInt(station?.id)}`)
-                        }
+                        onClick={() => {
+                            navigate(`/station/${parseInt(station?.id)}`);
+                        }}
                     >
                         {station.stationName}
                     </motion.h3>
@@ -63,7 +63,7 @@ Popup.propTypes = {
     station: PropTypes.object.isRequired,
     onClose: PropTypes.func.isRequired,
     handledirection: PropTypes.func.isRequired,
-    handleremove: PropTypes.func.isRequired
+    handleremove: PropTypes.func.isRequired,
 };
 
 Popup.propTypes = {

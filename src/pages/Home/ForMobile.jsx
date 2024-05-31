@@ -1,9 +1,5 @@
-// import { APIProvider, Map, Marker } from "@vis.gl/react-google-maps";
 import Navbar from "../../components/Navbar";
 import station_data from "../../lib/stations";
-
-// import React, { useEffect, useState, useRef, useCallback } from "react";
-// import { createRoot } from "react-dom/client";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import petrolmarker from "../../assets/petrolmarker.png";
@@ -12,20 +8,16 @@ import logo from "../../assets/logo.png";
 import SideBar from "../../components/SideBar";
 import { motion } from "framer-motion";
 import stack from "../../assets/stack.png";
-import {
-    APIProvider,
-    Map,
-    Marker,
-    AdvancedMarker,
-    Pin,
-} from "@vis.gl/react-google-maps";
+import { APIProvider, Map, Marker } from "@vis.gl/react-google-maps";
 import { Store } from "../../store/store";
+import loading from "../../assets/spin.gif";
 
 const ForMobile = () => {
     const navigate = useNavigate();
     const evStations = station_data.filter((station) => station.type === "ev");
     const [searchQuery, setSearchQuery] = useState("");
     const [filteredStations, setFilteredStations] = useState(station_data);
+    const [loading, setLoading] = useState(true); // Add loading state
     const handlesearch = () => {
         const results = filteredStations.filter((station) =>
             station.stationName
@@ -81,7 +73,7 @@ const ForMobile = () => {
     return (
         <APIProvider
             apiKey={"AIzaSyDIj9ZhXRQX7XsTB14AhZvUcVItytgSYRc"}
-            onLoad={() => console.log("Maps API has loaded.")}
+            onLoad={() => setLoading(false)} // Set loading to false when map loads
         >
             {" "}
             {store.SidebarOpen && (
@@ -166,53 +158,62 @@ const ForMobile = () => {
                     )}
                 </div>
 
-                <Map
-                    className={`w-[100%]  ${
-                        store.issearch ? "h-[73%]" : "h-[80%]"
-                    }`}
-                    defaultZoom={13}
-                    defaultCenter={{ lat: 35.362213, lng: -94.375338 }}
-                    onCameraChanged={(ev) =>
-                        console.log(
-                            "camera changed:",
-                            ev.detail.center,
-                            "zoom:",
-                            ev.detail.zoom
-                        )
-                    }
-                >
-                    {evStations
-                        .filter((station) =>
-                            station.stationName
-                                .toLowerCase()
-                                .includes(searchQuery.toLowerCase())
-                        )
-                        .map((station, index) => (
-                            <Marker
-                                key={index}
-                                position={{
-                                    lat: parseFloat(station.latitude),
-                                    lng: parseFloat(station.longitude),
-                                }}
-                                title={
-                                    station.stationName
-                                        ? station.stationName
-                                        : "Station Name Not Found"
-                                }
-                                options={{
-                                    icon: {
-                                        url: getMarkerIcon(station.type),
-                                        scaledSize: { width: 32, height: 32 },
-                                    },
-                                }}
-                                onClick={() => {
-                                    navigate(
-                                        `/station/${parseInt(station.id)}`
-                                    );
-                                }}
-                            ></Marker>
-                        ))}
-                </Map>
+                {loading ? ( // Conditionally render the loader
+                    <div className=" flex justify-center items-center h-full">
+                        <img src={loading} alt="" />
+                    </div>
+                ) : (
+                    <Map
+                        className={`w-[100%]  ${
+                            store.issearch ? "h-[73%]" : "h-[80%]"
+                        }`}
+                        defaultZoom={13}
+                        defaultCenter={{ lat: 35.362213, lng: -94.375338 }}
+                        onCameraChanged={(ev) =>
+                            console.log(
+                                "camera changed:",
+                                ev.detail.center,
+                                "zoom:",
+                                ev.detail.zoom
+                            )
+                        }
+                    >
+                        {evStations
+                            .filter((station) =>
+                                station.stationName
+                                    .toLowerCase()
+                                    .includes(searchQuery.toLowerCase())
+                            )
+                            .map((station, index) => (
+                                <Marker
+                                    key={index}
+                                    position={{
+                                        lat: parseFloat(station.latitude),
+                                        lng: parseFloat(station.longitude),
+                                    }}
+                                    title={
+                                        station.stationName
+                                            ? station.stationName
+                                            : "Station Name Not Found"
+                                    }
+                                    options={{
+                                        icon: {
+                                            url: getMarkerIcon(station.type),
+                                            scaledSize: {
+                                                width: 32,
+                                                height: 32,
+                                            },
+                                        },
+                                    }}
+                                    onClick={() => {
+                                        navigate(
+                                            `/station/${parseInt(station.id)}`
+                                        );
+                                    }}
+                                ></Marker>
+                            ))}
+                    </Map>
+                )}
 
                 <Navbar />
             </div>
