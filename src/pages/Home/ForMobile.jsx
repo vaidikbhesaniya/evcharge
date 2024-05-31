@@ -1,8 +1,10 @@
 import Navbar from "../../components/Navbar";
 import station_data from "../../lib/stations";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import petrolmarker from "../../assets/petrolmarker.png";
+import * as maptilersdk from "@maptiler/sdk";
+import "@maptiler/sdk/dist/maptiler-sdk.css";
 import mapmarker from "../../assets/mapmarker.png";
 import logo from "../../assets/logo.png";
 import SideBar from "../../components/SideBar";
@@ -11,13 +13,17 @@ import stack from "../../assets/stack.png";
 import { APIProvider, Map, Marker } from "@vis.gl/react-google-maps";
 import { Store } from "../../store/store";
 import spin from "../../assets/spin.gif";
-
+import Popup from "../../components/Popup";
+import MapboxDirections from "@mapbox/mapbox-sdk/services/directions";
 const ForMobile = () => {
     const navigate = useNavigate();
+    const map = useRef(null);
     const evStations = station_data.filter((station) => station.type === "ev");
     const [searchQuery, setSearchQuery] = useState("");
     const [filteredStations, setFilteredStations] = useState(station_data);
     const [loading, setLoading] = useState(true); // Add loading state
+    const [selectedStation, setSelectedStation] = useState(null);
+
     const handlesearch = () => {
         const results = filteredStations.filter((station) =>
             station.stationName
@@ -26,8 +32,110 @@ const ForMobile = () => {
         );
         setFilteredStations(results);
     };
+
+    const mapboxDirectionsClient = useRef(
+        MapboxDirections({
+            accessToken:
+                "sk.eyJ1IjoidmFpZGlrYmhlc2FuaXlhIiwiYSI6ImNsdnhqeXZvNjIyeDAyaXF6cnBza3psNWgifQ.v-66X7gjDpg_dg59_9dgog",
+        })
+    );
     const store = Store();
-    0;
+
+    const handleremovedirection = () => {
+        // setDirections(null);
+
+        if (map.current.getLayer("route")) {
+            map.current.removeLayer("route");
+            map.current.removeSource("route");
+        }
+    };
+    const handleSearchResultClick = (lng, lat) => {
+        // Get user's current location
+        navigator.geolocation.getCurrentPosition((position) => {
+            // const origin = [
+            //     position.coords.longitude,
+            //     position.coords.latitude,
+            // ];
+            const origin = [-89.852801, 33.885742];
+            // if (!isValidCoordinate(lng) || !isValidCoordinate(lat)) {
+            //     console.error("Invalid coordinates provided.");
+            //     return;
+            // }
+
+            const destination = [parseFloat(lng), parseFloat(lat)];
+
+            if (map.current.getLayer("route")) {
+                map.current.removeLayer("route");
+                map.current.removeSource("route");
+            }
+            // Ensure both origin and destination are valid coordinates
+            // if (!isValidCoordinate(origin) || !isValidCoordinate(destination)) {
+            //     console.error("Invalid coordinates provided.");
+            //     return;
+            // }
+
+            // Make a request to Mapbox Directions API
+            map.current.flyTo({ center: [lng, lat], zoom: zoom });
+            mapboxDirectionsClient.current
+                .getDirections({
+                    waypoints: [
+                        { coordinates: origin },
+                        { coordinates: destination },
+                    ],
+                    profile: "driving",
+                    geometries: "geojson",
+                })
+                .send()
+                .then((response) => {
+                    const route = response.body.routes[0];
+                    if (route) {
+                        const geojson = route.geometry;
+                        // Draw the route on the map
+                        map.current.addLayer({
+                            id: "route",
+                            type: "line",
+                            source: {
+                                type: "geojson",
+                                data: {
+                                    type: "Feature",
+                                    properties: {},
+                                    geometry: geojson,
+                                },
+                            },
+                            layout: {
+                                "line-join": "round",
+                                "line-cap": "round",
+                            },
+                            paint: {
+                                "line-color": "#f00",
+                                "line-width": 7,
+                                "line-opacity": 0.9,
+                            },
+                        });
+                    } else {
+                        console.error("No route found");
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error fetching directions:", error);
+                });
+        });
+    };
+
+    useEffect(() => {
+        // Function to hide the AreaPopup component after 10 seconds
+        const hideAreaPopup = () => {
+            setTimeout(() => {
+                setSelectedStation(null);
+            }, 10000); // 10 seconds
+        };
+
+        // Call the function to hide the AreaPopup component
+        hideAreaPopup();
+
+        // Cleanup function to clear the timeout when the component unmounts
+        return () => clearTimeout(hideAreaPopup);
+    }, []); // Execute when selectedArea changes
 
     useEffect(() => {
         let offset = 0;
@@ -164,6 +272,7 @@ const ForMobile = () => {
                     </div>
                 ) : (
                     <Map
+                        ref={map}
                         className={`w-[100%]  ${
                             store.issearch ? "h-[73%]" : "h-[80%]"
                         }`}
@@ -206,15 +315,34 @@ const ForMobile = () => {
                                         },
                                     }}
                                     onClick={() => {
-                                        navigate(
-                                            `/station/${parseInt(station.id)}`
+                                        // navigate(
+                                        //     `/station/${parseInt(station.id)}`
+                                        // );
+                                        setSelectedStation(
+                                            evStations.find(
+                                                (s) => s.id === station.id
+                                            )
                                         );
                                     }}
                                 ></Marker>
                             ))}
                     </Map>
                 )}
-
+                {selectedStation && (
+                    <AnimatePresence>
+                        <Popup
+                            station={selectedStation}
+                            handledirection={() =>
+                                handleSearchResultClick(
+                                    selectedStation.longitude,
+                                    selectedStation.latitude
+                                )
+                            }
+                            handleremove={() => handleremovedirection()}
+                            onClose={() => setSelectedStation(null)}
+                        />
+                    </AnimatePresence>
+                )}
                 <Navbar />
             </div>
         </APIProvider>

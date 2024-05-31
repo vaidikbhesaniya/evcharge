@@ -24,7 +24,7 @@ function Bookmark() {
 
     return (
         <div className=" bg-cosgreen h-screen w-screen ">
-            <div className="w-[100%] h-[10%] bg-primary">
+            <div className="w-[100%] h-[10%] bg-primary flex">
                 <div className="w-[20%] flex flex-col justify-center items-center">
                     <img
                         onClick={() => store.setSidebarOpen(!store.SidebarOpen)}
@@ -37,9 +37,9 @@ function Bookmark() {
                     <img src={logo} className="w-[170px]" alt="" />
                 </div>
             </div>
-            <div className="w-[100%] h-[80%]">
+            <div className="w-[100%] h-[80%] pt-3 p-2">
                 {bookmarks.length > 0 ? (
-                    <div className="text-white grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                    <div className="text-white grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 m-2">
                         {bookmarks.map((station, index) => (
                             <SwipableCard
                                 key={station.id}
