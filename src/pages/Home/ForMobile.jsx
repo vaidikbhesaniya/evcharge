@@ -6,11 +6,11 @@ import petrolmarker from "../../assets/petrolmarker.png";
 import mapmarker from "../../assets/mapmarker.png";
 import logo from "../../assets/logo.png";
 import SideBar from "../../components/SideBar";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import stack from "../../assets/stack.png";
 import { APIProvider, Map, Marker } from "@vis.gl/react-google-maps";
 import { Store } from "../../store/store";
-import loading from "../../assets/spin.gif";
+import spin from "../../assets/spin.gif";
 
 const ForMobile = () => {
     const navigate = useNavigate();
@@ -159,8 +159,8 @@ const ForMobile = () => {
                 </div>
 
                 {loading ? ( // Conditionally render the loader
-                    <div className=" flex justify-center items-center h-full">
-                        <img src={loading} alt="" />
+                    <div className=" bg-white flex justify-center items-center h-full">
+                        <img src={spin} alt="" />
                     </div>
                 ) : (
                     <Map

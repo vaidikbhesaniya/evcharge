@@ -132,7 +132,10 @@ export default function SideBar() {
                                             alt=""
                                         />
                                     </div>
-                                    <div className="text-sm"> {data.title}</div>
+                                    <div className="text-sm text-center">
+                                        {" "}
+                                        {data.title}
+                                    </div>
                                 </Link>
                             )}
                         </motion.div>

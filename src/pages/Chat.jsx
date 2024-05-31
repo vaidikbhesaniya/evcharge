@@ -8,12 +8,12 @@ const socket = io("https://evcharge-backend.onrender.com");
 
 export default function Chat() {
     const [messages, setMessages] = useState([]);
+    const [userCount, setUserCount] = useState(0);
     const store = Store();
     const [inputMessage, setInputMessage] = useState("");
     const [email, setEmail] = useState("");
 
     useEffect(() => {
-        // Prompt user to enter email when they join the chat
         requestNotificationPermission();
 
         const userEmail = store?.user?.userName;
@@ -22,18 +22,20 @@ export default function Chat() {
             socket.emit("user email", userEmail);
         }
 
-        // Receive the sender's email and socket ID
         socket.on("socketId", ({ email }) => {
             setEmail(email);
         });
 
-        // Receive chat messages
         socket.on("chat message", ({ email, message }) => {
             setMessages((prevMessages) => [
                 ...prevMessages,
                 { email, message },
             ]);
             triggerNotification(message);
+        });
+
+        socket.on("user count", (count) => {
+            setUserCount(count);
         });
 
         return () => {
@@ -51,7 +53,6 @@ export default function Chat() {
         }
     };
 
-    // Function to trigger notification
     const triggerNotification = (message) => {
         if ("Notification" in window && Notification.permission === "granted") {
             new Notification("New Message", {
@@ -74,6 +75,7 @@ export default function Chat() {
             <h1 className="text-2xl font-semibold mb-4">
                 Welcome to the Chat Room
             </h1>
+            <p className="text-gray-600 mb-2">Users in room: {userCount}</p>
             <div className="space-y-2">
                 <AnimatePresence>
                     {messages.map((msg, index) => (

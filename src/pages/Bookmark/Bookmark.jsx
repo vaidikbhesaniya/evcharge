@@ -7,6 +7,8 @@ import { useNavigate } from "react-router-dom";
 import { useSwipeable } from "react-swipeable";
 import PropTypes from "prop-types";
 import Navbar from "../../components/Navbar";
+import logo from "../../assets/logo.png";
+import back from "../../assets/profile/back.png";
 function Bookmark() {
     const navigate = useNavigate();
     const store = Store();
@@ -22,7 +24,20 @@ function Bookmark() {
 
     return (
         <div className=" bg-cosgreen h-screen w-screen ">
-            <div className="w-[100%] h-[90%]">
+            <div className="w-[100%] h-[10%] bg-primary">
+                <div className="w-[20%] flex flex-col justify-center items-center">
+                    <img
+                        onClick={() => store.setSidebarOpen(!store.SidebarOpen)}
+                        src={back}
+                        alt=""
+                        className="w-[50%] h-[50%]"
+                    />
+                </div>
+                <div className="w-[80%] justify-center  flex items-center">
+                    <img src={logo} className="w-[170px]" alt="" />
+                </div>
+            </div>
+            <div className="w-[100%] h-[80%]">
                 {bookmarks.length > 0 ? (
                     <div className="text-white grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                         {bookmarks.map((station, index) => (
