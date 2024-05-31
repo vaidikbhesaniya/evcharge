@@ -132,21 +132,25 @@ function Profile() {
                                 onClick={handleProfileClicked}
                             >
                                 {profilePreview ? (
-                                    <img
-                                        className="w-[100px] rounded-[50%]"
-                                        src={profilePreview}
-                                        alt="profileImage"
-                                    />
+                                    <div className="w-[100px] h-[100px] rounded-[50%] overflow-hidden">
+                                        <img
+                                            className="w-[100px] h-[100px] rounded-[50%]"
+                                            src={profilePreview}
+                                            alt="profileImage"
+                                        />
+                                    </div>
                                 ) : (
-                                    <img
-                                        className="w-[100px] rounded-[50%]"
-                                        src={
-                                            store.user?.profilePicture
-                                                ? store.user.profilePicture
-                                                : profileImage
-                                        }
-                                        alt="profileImage"
-                                    />
+                                    <div className="w-[100px] h-[100px] rounded-[50%] overflow-hidden">
+                                        <img
+                                            className="w-[100px] h-[100px] rounded-[50%]"
+                                            src={
+                                                store.user?.profilePicture
+                                                    ? store.user.profilePicture
+                                                    : profileImage
+                                            }
+                                            alt="profileImage"
+                                        />
+                                    </div>
                                 )}
                                 <input
                                     type="file"
@@ -224,21 +228,25 @@ function Profile() {
                                 onClick={handleProfileClicked}
                             >
                                 {profilePreview ? (
-                                    <img
-                                        className="w-[100px] rounded-[50%]"
-                                        src={profilePreview}
-                                        alt="profileImage"
-                                    />
+                                    <div className="w-[100px] h-[100px] rounded-[50%] overflow-hidden">
+                                        <img
+                                            className="w-[100px] h-[100px] rounded-[50%]"
+                                            src={profilePreview}
+                                            alt="profileImage"
+                                        />
+                                    </div>
                                 ) : (
-                                    <img
-                                        className="w-[100px] rounded-[50%]"
-                                        src={
-                                            store.user?.profilePicture
-                                                ? store.user.profilePicture
-                                                : profileImage
-                                        }
-                                        alt="profileImage"
-                                    />
+                                    <div className="w-[100px] h-[100px] rounded-[50%] overflow-hidden">
+                                        <img
+                                            className="w-[100px] h-[100px] rounded-[50%]"
+                                            src={
+                                                store.user?.profilePicture
+                                                    ? store.user.profilePicture
+                                                    : profileImage
+                                            }
+                                            alt="profileImage"
+                                        />
+                                    </div>
                                 )}
                             </div>
                         </div>

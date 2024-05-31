@@ -73,7 +73,7 @@ const ForMobile = () => {
         >
             <div className="w-[100vw] h-[100vh] bg-primary">
                 <div>
-                    <div className="w-[100vw] h-[8vh] z-[1111]">
+                    <div className="w-[100vw] h-[10vh] z-[1111]">
                         {store.issearch ? (
                             <div>
                                 <input
@@ -87,8 +87,15 @@ const ForMobile = () => {
                                 </button>
                             </div>
                         ) : (
-                            <div className="w-[100vw] h-[8vh] flex justify-center items-center">
-                                <img src={logo} className="w-[170px]" alt="" />
+                            <div className="w-[100vw] h-[10vh] flex flex-col">
+                                <div className="w-[100vw] h-[2vh] bg-white"></div>
+                                <div className="w-[100vw] h-[8vh] flex flex-col items-center justify-center">
+                                    <img
+                                        src={logo}
+                                        className="w-[170px]"
+                                        alt=""
+                                    />
+                                </div>
                             </div>
                         )}
                     </div>
@@ -115,7 +122,7 @@ const ForMobile = () => {
 
                 <Map
                     className={`w-[100%]  ${
-                        store.issearch ? "h-[82%]" : "h-[82%]"
+                        store.issearch ? "h-[80%]" : "h-[80%]"
                     }`}
                     defaultZoom={13}
                     defaultCenter={{ lat: 35.362213, lng: -94.375338 }}
