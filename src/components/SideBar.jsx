@@ -33,7 +33,7 @@ export default function SideBar() {
     const sidebardata = [
         {
             title: "Booknark Locations",
-            path: "/",
+            path: "/bookmark",
             icon: Bookmark,
         },
         {
@@ -77,7 +77,7 @@ export default function SideBar() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="w-[70dvw] h-[100dvh] fixed bg-primary z-30 rounded-r-xl"
+            className="w-[70dvw]  h-[100dvh] fixed bg-primary z-30 rounded-r-xl"
         >
             <div className="w-full h-[20%] flex justify-center items-center flex-col">
                 <img
@@ -139,23 +139,22 @@ export default function SideBar() {
                     ))}
                 </div>
 
-                <div className="w-full h-[20%] flex justify-center items-center ">
-                    <AlertDialog>
+                <div className="w-full h-[20%] flex justify-center items-center bg-primary">
+                    <AlertDialog className="bg-primary">
                         <AlertDialogTrigger className="w-[60%] h-[50%] shadow-xl bg-red-500 text-white poppins-medium text-2xl m-2 p-2 rounded-xl mr-4 ml-4   justify-center items-center flex cursor-pointer ">
                             <div className="w-[20%] h-full justify-center items-center flex ">
                                 <img src={logout} className="w-[25px]" alt="" />
                             </div>{" "}
                             Log out
                         </AlertDialogTrigger>
-                        <AlertDialogContent>
+                        <AlertDialogContent className="bg-primary border-none">
                             <AlertDialogHeader>
                                 <AlertDialogTitle>
                                     Are you absolutely sure?
                                 </AlertDialogTitle>
-                                <AlertDialogDescription>
+                                <AlertDialogDescription className="text-white">
                                     This action cannot be undone. This will
-                                    permanently delete your account and remove
-                                    your data from our servers.
+                                    logout your account.
                                 </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
@@ -164,7 +163,7 @@ export default function SideBar() {
                                     onClick={() => store.handlelogout(navigate)}
                                 >
                                     {" "}
-                                    Continue
+                                    logout
                                 </AlertDialogAction>
                             </AlertDialogFooter>
                         </AlertDialogContent>

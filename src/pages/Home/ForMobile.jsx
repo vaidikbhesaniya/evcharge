@@ -9,6 +9,9 @@ import { useNavigate } from "react-router-dom";
 import petrolmarker from "../../assets/petrolmarker.png";
 import mapmarker from "../../assets/mapmarker.png";
 import logo from "../../assets/logo.png";
+import SideBar from "../../components/SideBar";
+import { motion } from "framer-motion";
+import stack from "../../assets/stack.png";
 import {
     APIProvider,
     Map,
@@ -22,6 +25,14 @@ const ForMobile = () => {
     const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState("");
     const [filteredStations, setFilteredStations] = useState(station_data);
+    const handlesearch = () => {
+        const results = filteredStations.filter((station) =>
+            station.stationName
+                ?.toLowerCase()
+                .includes(searchQuery?.toLowerCase())
+        );
+        setFilteredStations(results);
+    };
     const store = Store();
     0;
 
@@ -71,25 +82,41 @@ const ForMobile = () => {
             apiKey={"AIzaSyDIj9ZhXRQX7XsTB14AhZvUcVItytgSYRc"}
             onLoad={() => console.log("Maps API has loaded.")}
         >
+            {" "}
+            {store.SidebarOpen && (
+                <motion.div
+                    className="fixed w-full h-full backdrop-blur-md z-[11] "
+                    onClick={() => store.setSidebarOpen(false)}
+                ></motion.div>
+            )}
+            {store.SidebarOpen && <SideBar />}
             <div className="w-[100vw] h-[100vh] bg-primary">
                 <div>
-                    <div className="w-[100vw] h-[10vh] z-[1111]">
-                        {store.issearch ? (
-                            <div>
-                                <input
-                                    className="w-[80%] h-[100%] bg-primary z-[1111] outline-none"
-                                    placeholder="Search for stations..."
-                                    value={searchQuery}
-                                    onChange={handleSearch}
-                                />
-                                <button className="w-[20%] h-[100%] z-[1111]">
-                                    search
-                                </button>
-                            </div>
-                        ) : (
-                            <div className="w-[100vw] h-[10vh] flex flex-col">
-                                <div className="w-[100vw] h-[2vh] bg-white"></div>
-                                <div className="w-[100vw] h-[8vh] flex flex-col items-center justify-center">
+                    <div
+                        className={`${
+                            store.issearch ? "h-[17vh]" : " h-[10vh]"
+                        } w-[100vw] z-[1111]`}
+                    >
+                        <div
+                            className={` ${
+                                store.issearch ? "h-[17vh]" : " h-[10vh]"
+                            } w-[100vw] flex flex-col`}
+                        >
+                            <div className="w-[100vw] h-[2vh] bg-white"></div>
+                            <div className="w-[100vw] h-[8vh] flex flex-row">
+                                <div className="w-[20%] flex justify-center items-center">
+                                    <img
+                                        onClick={() =>
+                                            store.setSidebarOpen(
+                                                !store.SidebarOpen
+                                            )
+                                        }
+                                        src={stack}
+                                        alt=""
+                                        className="w-[50%] h-[50%]"
+                                    />
+                                </div>
+                                <div className="w-[80%] justify-center  flex items-center">
                                     <img
                                         src={logo}
                                         className="w-[170px]"
@@ -97,7 +124,25 @@ const ForMobile = () => {
                                     />
                                 </div>
                             </div>
-                        )}
+                            {store.issearch && (
+                                <div className="w-[100vw] h-[7vh] flex flex-row justify-center items-center">
+                                    <input
+                                        className="w-[80%] h-[100%] m-2 bg-primary z-[1111] outline-none placeholder:text-[white] text-cosgreen"
+                                        placeholder="Search for stations..."
+                                        value={searchQuery}
+                                        onChange={handleSearch}
+                                        onKeyDown={(e) => {
+                                            if (e.key === "Enter") {
+                                                handlesearch();
+                                            }
+                                        }}
+                                    />
+                                    <button className="w-[20%] h-[100%] z-[1111]">
+                                        search
+                                    </button>
+                                </div>
+                            )}
+                        </div>
                     </div>
                     {store.issearch && searchQuery && (
                         <div className="absolute  left-0 w-full bg-white z-[1111] max-h-[20%] overflow-y-auto">
@@ -122,7 +167,7 @@ const ForMobile = () => {
 
                 <Map
                     className={`w-[100%]  ${
-                        store.issearch ? "h-[80%]" : "h-[80%]"
+                        store.issearch ? "h-[73%]" : "h-[80%]"
                     }`}
                     defaultZoom={13}
                     defaultCenter={{ lat: 35.362213, lng: -94.375338 }}
@@ -167,6 +212,7 @@ const ForMobile = () => {
                             ></Marker>
                         ))}
                 </Map>
+
                 <Navbar />
             </div>
         </APIProvider>

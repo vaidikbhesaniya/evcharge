@@ -69,10 +69,10 @@ function Profile() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="w-screen h-[100dvh] border-solid bg-cosgreen"
+            className="w-screen h-[100dvh] border-solid"
         >
             <div
-                className="w-full h-[90%] m-auto overflow-hidden bg-cosgreen
+                className="w-full h-[90%] m-auto overflow-hidden bg-[#1b1b1b] 
             "
             >
                 <div className="w-full  h-[10%] bg-[#1b1b1b] rounded-b-md flex flex-col justify-center items-center  backdrop-blur-2xl ">
