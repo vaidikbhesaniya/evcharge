@@ -31,6 +31,7 @@
     "leaflet": "^1.9.4",
     "lucide-react": "^0.378.0",
     "mapbox-gl": "^3.3.0",
+    "marker-clusterer-plus": "^2.1.4",
     "npm": "^10.7.0",
     "opencage-api-client": "^1.0.5",
     "path": "^0.12.7",

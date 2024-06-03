@@ -417,8 +417,9 @@ function StationDetail() {
                                                             {review.timeAgo}
                                                         </div>
                                                     </div>
-                                                    {store.user.id ==
-                                                    review.User.id ? (
+                                                    {review &&
+                                                    store.user.id ==
+                                                        review.User.id ? (
                                                         <div
                                                             className="cursor-pointer items-end flex justify-end w-[150px] poppins-medium"
                                                             onClick={() =>

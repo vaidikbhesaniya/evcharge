@@ -1,269 +1,368 @@
-import { motion } from "framer-motion";
-import Navbar from "../components/Navbar";
-import { Link } from "react-router-dom";
-import search from "../assets/search.png";
-import carcover from "../assets/carcover.jpg";
-
-import fastcharge from "../assets/fastcharge.png";
-import rapid from "../assets/rapidcharge.png";
-import standard from "../assets/standardcharge.png";
-import supercharge from "../assets/supercharge.png";
+import Navbar from "../../components/Navbar";
+import station_data from "../../lib/stations";
 import { useState, useEffect } from "react";
-import { MdChevronLeft, MdChevronRight } from "react-icons/md";
-import { useRef } from "react";
-function Home() {
-    //for api
-    const fakedata = [
-        {
-            station_id: "123456789",
-            station_name: "MobiLane Charging Station",
-            station_address: "GRXH+FF, Virpur, Gujarat 364270",
-            station_capacity: "80kw",
-            station_lat: "Station Latitude",
-            station_long: "Station Longitude",
-            station_distance: "100m",
-            sorce: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1445714.515552069!2d71.24101446153328!3d21.677371121258734!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be2071ae485c9cd%3A0x318ef78014c08d6f!2sMobiLane%20Charging%20Station!5e1!3m2!1sen!2sin!4v1714371115225!5m2!1sen!2sin",
-        },
-        {
-            station_id: "123456789",
-            station_name: "CHARGEPOD Charging Station",
-            station_address: "Station Address",
-            station_capacity: "50kw",
-            station_lat: "Station Latitude",
-            station_long: "Station Longitude",
-            station_distance: "100m",
-            sorce: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1603652.8122686679!2d68.77770146224873!3d20.814531894016017!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bfd33a2d2a009e1%3A0x4aa8d47a2021b232!2sCHARGEPOD%20Charging%20Station!5e1!3m2!1sen!2sin!4v1714371363375!5m2!1sen!2sin",
-        },
-        {
-            station_id: "123456789",
-            station_name: "Fast charge station",
-            station_address: "Station Address",
-            station_capacity: "Station Capacity",
-            station_lat: "Station Latitude",
-            station_distance: "100m",
-            station_long: "Station Longitude",
-            sorce: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d26889960.940113474!2d55.05544059891872!3d11.593050570216578!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bab9da45989f705%3A0xc2881964a44459e!2sZeon%20Charging%20Station!5e1!3m2!1sen!2sin!4v1714371659378!5m2!1sen!2sin",
-        },
-        {
-            station_id: "123456789",
-            station_name: "Fast charge station",
-            station_address: "Station Address",
-            station_capacity: "Station Capacity",
-            station_lat: "Station Latitude",
-            station_long: "Station Longitude",
-            station_distance: "100m",
-        },
-        {
-            station_id: "123456789",
-            station_name: "Fast charge station",
-            station_address: "Station Address",
-            station_capacity: "Station Capacity",
-            station_lat: "Station Latitude",
-            station_long: "Station Longitude",
-            station_distance: "100m",
-        },
-        {
-            station_id: "123456789",
-            station_name: "Fast charge station",
-            station_address: "Station Address",
-            station_capacity: "Station Capacity",
-            station_lat: "Station Latitude",
-            station_long: "Station Longitude",
-            station_distance: "100m",
-        },
-        {
-            station_id: "123456789",
-            station_name: "Fast charge station",
-            station_address: "Station Address",
-            station_capacity: "Station Capacity",
-            station_lat: "Station Latitude",
-            station_long: "Station Longitude",
-            station_distance: "100m",
-        },
-        {
-            station_id: "123456789",
-            station_name: "Fast charge station",
-            station_address: "Station Address",
-            station_capacity: "Station Capacity",
-            station_lat: "Station Latitude",
-            station_long: "Station Longitude",
-            station_distance: "100m",
-        },
-        {
-            station_id: "123456789",
-            station_name: "Fast charge station",
-            station_address: "Station Address",
-            station_capacity: "Station Capacity",
-            station_lat: "Station Latitude",
-            station_long: "Station Longitude",
-            station_distance: "100m",
-        },
-    ];
+import { useNavigate } from "react-router-dom";
+import petrolmarker from "../../assets/petrolmarker.png";
 
-    const sliderRef = useRef(null);
-    const [showLeftArrow, setShowLeftArrow] = useState(false);
-    const [showRightArrow, setShowRightArrow] = useState(true);
-    const checkScroll = () => {
-        if (sliderRef.current) {
-            const { scrollLeft, scrollWidth, clientWidth } = sliderRef.current;
-            setShowLeftArrow(scrollLeft > 0);
-            setShowRightArrow(scrollWidth - scrollLeft !== clientWidth);
-        }
+import "@maptiler/sdk/dist/maptiler-sdk.css";
+import mapmarker from "../../assets/mapmarker.png";
+import logo from "../../assets/logo.png";
+import SideBar from "../../components/SideBar";
+import { motion, AnimatePresence } from "framer-motion";
+import stack from "../../assets/stack.png";
+// import { APIProvider, Map, Marker } from "@vis.gl/react-google-maps";
+import { Store } from "../../store/store";
+// import spin from "../../assets/spin.gif";
+import { MarkerClusterer } from "@googlemaps/markerclusterer";
+
+import {
+    useJsApiLoader,
+    GoogleMap,
+    Marker,
+    DirectionsRenderer,
+} from "@react-google-maps/api";
+// import { useState } from "react";
+import Popup from "../../components/Popup";
+// import MapboxDirections from "@mapbox/mapbox-sdk/services/directions";
+const ForMobile = () => {
+    const navigate = useNavigate();
+    const [userLocation, setUserLocation] = useState(null);
+    const [map, setMap] = useState(null);
+
+    const [evStations, setEvStations] = useState([]);
+    // const evStations = station_data.filter((station) => station.type === "ev");
+    const [searchQuery, setSearchQuery] = useState("");
+    const [filteredStations, setFilteredStations] = useState(station_data);
+    // const [loading, setLoading] = useState(true); // Add loading state
+    const [selectedStation, setSelectedStation] = useState(null);
+    const [directionsResponse, setDirectionsResponse] = useState(null);
+    const [distance, setDistance] = useState("");
+    const [duration, setDuration] = useState("");
+    const handlesearch = () => {
+        const results = filteredStations.filter((station) =>
+            station.stationName
+                ?.toLowerCase()
+                .includes(searchQuery?.toLowerCase())
+        );
+        setFilteredStations(results);
     };
     useEffect(() => {
-        checkScroll();
+        // Filter EV stations
+        const filteredEVStations = station_data.filter(
+            (station) => station.type === "ev"
+        );
+        setEvStations(filteredEVStations);
+    }, []);
+    const store = Store();
+    const { isLoaded } = useJsApiLoader({
+        googleMapsApiKey: "AIzaSyDIj9ZhXRQX7XsTB14AhZvUcVItytgSYRc",
+        libraries: ["places"],
+    });
+
+    // useEffect(() => {
+    //     // Function to hide the AreaPopup component after 10 seconds
+    //     const hideAreaPopup = () => {
+    //         setTimeout(() => {
+    //             setSelectedStation(null);
+    //         }, 10000); // 10 seconds
+    //     };
+
+    //     // Call the function to hide the AreaPopup component
+    //     hideAreaPopup();
+
+    //     // Cleanup function to clear the timeout when the component unmounts
+    //     return () => clearTimeout(hideAreaPopup);
+    // }, []); // Execute when selectedArea changes
+
+    useEffect(() => {
+        let offset = 0;
+
+        async function fetchData() {
+            const intervalId = setInterval(() => {
+                if (offset > 2800) {
+                    clearInterval(intervalId); // Clear the interval if offset is greater than 80000
+                    console.log("Offset limit reached, stopping the interval.");
+                    return;
+                }
+                store.getstation(offset);
+                offset += 1000; // Increase offset by 1000 each second
+
+                // console.log(store.stations);
+            }, 1000);
+            // setstationsall(store.stations);
+        }
+
+        fetchData();
     }, []);
 
-    const filterdata = [
-        {
-            filtername: "Fast Charge",
-            img: fastcharge,
-        },
-        {
-            filtername: "Rapid Charge",
-            img: rapid,
-        },
-        {
-            filtername: "Standard Charge",
-            img: standard,
-        },
-        {
-            filtername: "Super Charge",
-            img: supercharge,
-        },
-    ];
-    const [data, setdata] = useState(filterdata.slice(0, 4));
-    const addmore = () => {
-        const newData = filterdata.slice(data.length, data.length + 2);
-        setdata((prevData) => [...prevData, ...newData]);
-        if (sliderRef.current) {
-            sliderRef.current.scrollLeft += 500;
-            checkScroll();
+    useEffect(() => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const { latitude, longitude } = position.coords;
+                    setUserLocation({ lat: latitude, lng: longitude });
+                },
+                (error) => {
+                    console.error("Error getting current location", error);
+                }
+            );
+        }
+    }, []);
+
+    const getMarkerIcon = (type) => {
+        switch (type) {
+            case "ev":
+                return mapmarker; // Blue marker for EV stations
+            case "cng":
+                return petrolmarker; // Yellow marker for CNG stations
+            default:
+                return mapmarker; // Default marker for other stations
         }
     };
 
+    const handleSearch = (e) => {
+        setSearchQuery(e.target.value);
+        const filtered = station_data.filter((station) =>
+            station.stationName
+                .toLowerCase()
+                .includes(e.target.value.toLowerCase())
+        );
+        setFilteredStations(filtered);
+    };
+
+    async function calculateRoute(lat, lng) {
+        // eslint-disable-next-line no-undef
+        const directionsService = new google.maps.DirectionsService();
+        const results = await directionsService.route({
+            origin: { lat: 35.362213, lng: -94.375338 },
+            destination: { lat: lat, lng: lng },
+            // eslint-disable-next-line no-undef
+            travelMode: google.maps.TravelMode.DRIVING,
+        });
+        setDirectionsResponse(results);
+        setDistance(results.routes[0].legs[0].distance.text);
+        setDuration(results.routes[0].legs[0].duration.text);
+    }
+
+    function clearRoute() {
+        setDirectionsResponse(null);
+        setDistance("");
+        setDuration("");
+    }
+
+    useEffect(() => {
+        if (isLoaded && map) {
+            const markers = evStations.map(
+                (station) =>
+                    new window.google.maps.Marker({
+                        position: {
+                            lat: parseFloat(station.latitude),
+                            lng: parseFloat(station.longitude),
+                        },
+                        title: station.stationName
+                            ? station.stationName
+                            : "Station Name Not Found",
+                        icon: {
+                            url: getMarkerIcon(station.type),
+                            scaledSize: {
+                                width: 32,
+                                height: 32,
+                            },
+                        },
+                    })
+            );
+
+            const markerCluster = new MarkerClusterer(map, markers, {
+                imagePath:
+                    "https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m",
+                gridSize: 60,
+                maxZoom: 15,
+            });
+        }
+    }, [isLoaded, map, evStations]);
+
     return (
-        <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="w-screen h-[100dvh] border-solid     bg-coswhite"
-        >
-            <div
-                className="w-full h-[90%] m-auto overflow-hidden bg-coswhite
-            "
-            >
-                <div className="w-full  h-[20%] bg-primary rounded-b-md flex flex-col justify-center items-center  backdrop-blur-2xl ">
-                    <div className="w-[90%] h-[40%] flex flex-row justify-between items-center  bg-primary relative rounded-2xl p-6 text-center">
-                        <h1 className="poppins-medium text-3xl mt-4 text-[#ffffff]">
-                            Find Ev charging station{" "}
-                        </h1>
-                    </div>
-                    <div className="w-[90%] h-[40%] flex flex-row justify-between items-center  bg-primary relative rounded-2xl top-8 ">
-                        <img
-                            src={search}
-                            alt=""
-                            className="w-[40px] p-1 ml-5"
-                        />
-                        <input
-                            type="text"
-                            className="w-[80%] placeholder:text-black  h-full text-[black] poppins-medium bg-primary rounded-e-2xl outline-none border-none"
-                            placeholder="Search for a station"
-                        />
-                    </div>
-                </div>
-                <div className="overflow-auto scroll-smooth w-full h-[80%]  pt-6 poppins-medium  ">
-                    <p className="pl-4 text-cosgreen text-sm">
-                        Nearby charging spot
-                    </p>
-                    <div className="w-full h-[50%]  flex justify-between items-center ">
+        <div className="w-[100dvw] h-[100dvh]">
+            {" "}
+            {store.SidebarOpen && (
+                <motion.div
+                    className="fixed w-full h-full backdrop-blur-md z-[11] "
+                    onClick={() => store.setSidebarOpen(false)}
+                ></motion.div>
+            )}
+            {store.SidebarOpen && <SideBar />}
+            <div className="w-[100vw] h-[100vh] bg-primary">
+                <div>
+                    <div
+                        className={`${
+                            store.issearch ? "h-[17vh]" : " h-[10vh]"
+                        } w-[100vw] z-[1111]`}
+                    >
                         <div
-                            id="slider"
-                            className="w-full h-full overflow-x-scroll scroll whitespace-nowrap scroll-smooth scrollbar-hide "
+                            className={` ${
+                                store.issearch ? "h-[17vh]" : " h-[10vh]"
+                            } w-[100vw] flex flex-col`}
                         >
-                            {fakedata.map((item, key) => (
-                                <div 
-                                    key={key}
-                                    className="w-[70%] h-[90%] text-white inline-block  cursor-pointer hover:scale-105 ease-in-out duration-300 bg-cosgreen m-2 p-3 rounded-2xl justify-center items-center mt-3"
+                            <div className="w-[100vw] h-[2vh] bg-white"></div>
+                            <div className="w-[100vw] h-[8vh] flex flex-row">
+                                <div className="w-[20%] flex justify-center items-center">
+                                    <img
+                                        onClick={() =>
+                                            store.setSidebarOpen(
+                                                !store.SidebarOpen
+                                            )
+                                        }
+                                        src={stack}
+                                        alt=""
+                                        className="w-[50%] h-[50%]"
+                                    />
+                                </div>
+                                <div className="w-[80%] justify-center  flex items-center">
+                                    <img
+                                        src={logo}
+                                        className="w-[170px]"
+                                        alt=""
+                                    />
+                                </div>
+                            </div>
+                            {store.issearch && (
+                                <div className="w-[100vw] h-[7vh] flex flex-row justify-center items-center">
+                                    {/* <Autocomplete> */}
+                                    <input
+                                        className="w-[80%] h-[100%] m-2 bg-primary z-[1111] outline-none placeholder:text-[white] text-cosgreen"
+                                        placeholder="Search for stations..."
+                                        value={searchQuery}
+                                        onChange={handleSearch}
+                                        onKeyDown={(e) => {
+                                            if (e.key === "Enter") {
+                                                handlesearch();
+                                            }
+                                        }}
+                                    />
+                                    {/* </Autocomplete> */}
+                                    <button className="w-[20%] h-[100%] z-[1111]">
+                                        search
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                    {store.issearch && searchQuery && (
+                        <div className="absolute  left-0 w-full bg-white z-[1111] max-h-[20%] overflow-y-auto">
+                            {filteredStations.map((station, index) => (
+                                <div
+                                    key={index}
+                                    className="p-2 border-b cursor-pointer"
+                                    onClick={() => {
+                                        navigate(
+                                            `/station/${parseInt(station.id)}`
+                                        );
+                                    }}
                                 >
-                                    <div className="w-full h-full flex-col flex justify-center items-center">
-                                        <div className="w-[95%] h-[80%]  rounded-2xl mb-2 overflow-hidden">
-                                            <iframe
-                                                src={item?.sorce}
-                                                allowFullScreen
-                                                loading="lazy"
-                                            ></iframe>
-                                        </div>
-                                        <div className="w-[95%] h-[20%]  text-[10px] flex flex-row">
-                                            <div className="flex flex-col w-[80%]">
-                                                <p>{item.station_name}</p>
-                                                <p>{item.station_capacity}</p>
-                                            </div>
-                                            <div className="flex flex-col w-[20%] justify-center items-center text-[20px]">
-                                                <p>{item.station_distance}</p>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    {station.stationName}
                                 </div>
                             ))}
                         </div>
-                    </div>
-
-                    <div className="w-full h-[50%]">
-                        <p className="pl-4 text-cosgreen text-sm"> Filter by</p>
-                        <div className="w-full h-[50%] relative flex items-center">
-                            <div
-                                ref={sliderRef}
-                                id="filterslider"
-                                className="w-full h-full overflow-x-scroll scroll whitespace-nowrap scroll-smooth scrollbar-hide "
-                            >
-                                {data.map((i, index) => (
-                                    <div
-                                        key={index}
-                                        className="w-[80px] shadow-md h-[80px] text-cosgreen inline-block  cursor-pointer hover:scale-105 ease-in-out duration-300 bg-white m-2 p-3 rounded-2xl justify-center items-center mt-3"
-                                    >
-                                        <div className="w-full h-full flex-col flex justify-center items-center">
-                                            <div className="  flex justify-center items-center w-[70%] h-[70%] mb-1">
-                                                <img src={i.img} alt="" />
-                                            </div>
-
-                                            <div>
-                                                <p className="flex justify-center items-center poppins-medium text-[8px]">
-                                                    {i.filtername}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-
-                            <motion.div
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                className={`w-[40px] h-[40px] bg-white flex justify-center items-center rounded-full absolute right-0 ${
-                                    filterdata.length === data.length
-                                        ? "hidden"
-                                        : ""
-                                } ${filterdata.length > 4 ? "" : "hidden"}`}
-                            >
-                                <MdChevronRight
-                                    className="text-3xl text-cosgreen right-0"
-                                    onClick={() => {
-                                        addmore();
-                                    }}
-                                />
-                            </motion.div>
-                        </div>
-                    </div>
-                    <p className="text-center text-[#8d8d8d] text-[10px]">
-                        copyright © 2024 by _______
-                    </p>
+                    )}
                 </div>
-            </div>
-            <Navbar />
-        </motion.div>
-    );
-}
 
-export default Home;
+                <GoogleMap
+                    ref={map}
+                    className={`w-[100%]  ${
+                        store.issearch ? "h-[73%]" : "h-[80%]"
+                    }`}
+                    zoom={13}
+                    center={{ lat: 35.362213, lng: -94.375338 }}
+                    options={{
+                        zoomControl: false,
+                        streetViewControl: false,
+                        mapTypeControl: false,
+                        fullscreenControl: false,
+                    }}
+                    gestureHandling="auto"
+                    mapContainerStyle={{
+                        width: "100%",
+                        height: `${store.issearch ? "73%" : "80%"}`,
+                    }}
+                    onLoad={(map) => setMap(map)}
+                >
+                    {evStations
+                        .filter((station) =>
+                            station.stationName
+                                .toLowerCase()
+                                .includes(searchQuery.toLowerCase())
+                        )
+                        .map((station, index) => (
+                            <Marker
+                                key={index}
+                                position={{
+                                    lat: parseFloat(station.latitude),
+                                    lng: parseFloat(station.longitude),
+                                }}
+                                title={
+                                    station.stationName
+                                        ? station.stationName
+                                        : "Station Name Not Found"
+                                }
+                                options={{
+                                    icon: {
+                                        url: getMarkerIcon(station.type),
+                                        scaledSize: {
+                                            width: 32,
+                                            height: 32,
+                                        },
+                                    },
+                                }}
+                                onClick={() => {
+                                    // navigate(
+                                    //     `/station/${parseInt(station.id)}`
+                                    // );
+                                    setSelectedStation(
+                                        evStations.find(
+                                            (s) => s.id === station.id
+                                        )
+                                    );
+                                }}
+                            ></Marker>
+                        ))}
+
+                    {directionsResponse && (
+                        <DirectionsRenderer
+                            directions={directionsResponse}
+                            options={{
+                                polylineOptions: {
+                                    strokeColor: "red", // Change this to the desired color
+                                    strokeOpacity: 1.0,
+                                    strokeWeight: 5,
+                                },
+                                suppressMarkers: true,
+                                suppressInfoWindows: true,
+                            }}
+                        />
+                    )}
+                </GoogleMap>
+
+                {selectedStation && (
+                    <AnimatePresence>
+                        <Popup
+                            station={selectedStation}
+                            distance={distance}
+                            duration={duration}
+                            handledirection={() =>
+                                calculateRoute(
+                                    parseFloat(selectedStation.latitude),
+                                    parseFloat(selectedStation.longitude)
+                                )
+                            }
+                            handleremove={() => clearRoute()}
+                            onClose={() => setSelectedStation(null)}
+                        />
+                    </AnimatePresence>
+                )}
+                <Navbar />
+            </div>
+        </div>
+    );
+};
+
+export default ForMobile;
