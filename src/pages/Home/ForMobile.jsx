@@ -1,29 +1,40 @@
 import Navbar from "../../components/Navbar";
 import station_data from "../../lib/stations";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import petrolmarker from "../../assets/petrolmarker.png";
-import * as maptilersdk from "@maptiler/sdk";
+
 import "@maptiler/sdk/dist/maptiler-sdk.css";
 import mapmarker from "../../assets/mapmarker.png";
 import logo from "../../assets/logo.png";
 import SideBar from "../../components/SideBar";
 import { motion, AnimatePresence } from "framer-motion";
 import stack from "../../assets/stack.png";
-import { APIProvider, Map, Marker } from "@vis.gl/react-google-maps";
+// import { APIProvider, Map, Marker } from "@vis.gl/react-google-maps";
 import { Store } from "../../store/store";
-import spin from "../../assets/spin.gif";
+// import spin from "../../assets/spin.gif";
+
+import {
+    useJsApiLoader,
+    GoogleMap,
+    Marker,
+    DirectionsRenderer,
+} from "@react-google-maps/api";
+// import { useState } from "react";
 import Popup from "../../components/Popup";
-import MapboxDirections from "@mapbox/mapbox-sdk/services/directions";
+// import MapboxDirections from "@mapbox/mapbox-sdk/services/directions";
 const ForMobile = () => {
     const navigate = useNavigate();
-    const map = useRef(null);
+    const [userLocation, setUserLocation] = useState(null);
+    const [map, setMap] = useState(null);
     const evStations = station_data.filter((station) => station.type === "ev");
     const [searchQuery, setSearchQuery] = useState("");
     const [filteredStations, setFilteredStations] = useState(station_data);
-    const [loading, setLoading] = useState(true); // Add loading state
+    // const [loading, setLoading] = useState(true); // Add loading state
     const [selectedStation, setSelectedStation] = useState(null);
-
+    const [directionsResponse, setDirectionsResponse] = useState(null);
+    const [distance, setDistance] = useState("");
+    const [duration, setDuration] = useState("");
     const handlesearch = () => {
         const results = filteredStations.filter((station) =>
             station.stationName
@@ -33,109 +44,26 @@ const ForMobile = () => {
         setFilteredStations(results);
     };
 
-    const mapboxDirectionsClient = useRef(
-        MapboxDirections({
-            accessToken:
-                "sk.eyJ1IjoidmFpZGlrYmhlc2FuaXlhIiwiYSI6ImNsdnhqeXZvNjIyeDAyaXF6cnBza3psNWgifQ.v-66X7gjDpg_dg59_9dgog",
-        })
-    );
     const store = Store();
+    const { isLoaded } = useJsApiLoader({
+        googleMapsApiKey: "AIzaSyDIj9ZhXRQX7XsTB14AhZvUcVItytgSYRc",
+        libraries: ["places"],
+    });
 
-    const handleremovedirection = () => {
-        // setDirections(null);
+    // useEffect(() => {
+    //     // Function to hide the AreaPopup component after 10 seconds
+    //     const hideAreaPopup = () => {
+    //         setTimeout(() => {
+    //             setSelectedStation(null);
+    //         }, 10000); // 10 seconds
+    //     };
 
-        if (map.current.getLayer("route")) {
-            map.current.removeLayer("route");
-            map.current.removeSource("route");
-        }
-    };
-    const handleSearchResultClick = (lng, lat) => {
-        // Get user's current location
-        navigator.geolocation.getCurrentPosition((position) => {
-            // const origin = [
-            //     position.coords.longitude,
-            //     position.coords.latitude,
-            // ];
-            const origin = [-89.852801, 33.885742];
-            // if (!isValidCoordinate(lng) || !isValidCoordinate(lat)) {
-            //     console.error("Invalid coordinates provided.");
-            //     return;
-            // }
+    //     // Call the function to hide the AreaPopup component
+    //     hideAreaPopup();
 
-            const destination = [parseFloat(lng), parseFloat(lat)];
-
-            if (map.current.getLayer("route")) {
-                map.current.removeLayer("route");
-                map.current.removeSource("route");
-            }
-            // Ensure both origin and destination are valid coordinates
-            // if (!isValidCoordinate(origin) || !isValidCoordinate(destination)) {
-            //     console.error("Invalid coordinates provided.");
-            //     return;
-            // }
-
-            // Make a request to Mapbox Directions API
-            map.current.flyTo({ center: [lng, lat], zoom: zoom });
-            mapboxDirectionsClient.current
-                .getDirections({
-                    waypoints: [
-                        { coordinates: origin },
-                        { coordinates: destination },
-                    ],
-                    profile: "driving",
-                    geometries: "geojson",
-                })
-                .send()
-                .then((response) => {
-                    const route = response.body.routes[0];
-                    if (route) {
-                        const geojson = route.geometry;
-                        // Draw the route on the map
-                        map.current.addLayer({
-                            id: "route",
-                            type: "line",
-                            source: {
-                                type: "geojson",
-                                data: {
-                                    type: "Feature",
-                                    properties: {},
-                                    geometry: geojson,
-                                },
-                            },
-                            layout: {
-                                "line-join": "round",
-                                "line-cap": "round",
-                            },
-                            paint: {
-                                "line-color": "#f00",
-                                "line-width": 7,
-                                "line-opacity": 0.9,
-                            },
-                        });
-                    } else {
-                        console.error("No route found");
-                    }
-                })
-                .catch((error) => {
-                    console.error("Error fetching directions:", error);
-                });
-        });
-    };
-
-    useEffect(() => {
-        // Function to hide the AreaPopup component after 10 seconds
-        const hideAreaPopup = () => {
-            setTimeout(() => {
-                setSelectedStation(null);
-            }, 10000); // 10 seconds
-        };
-
-        // Call the function to hide the AreaPopup component
-        hideAreaPopup();
-
-        // Cleanup function to clear the timeout when the component unmounts
-        return () => clearTimeout(hideAreaPopup);
-    }, []); // Execute when selectedArea changes
+    //     // Cleanup function to clear the timeout when the component unmounts
+    //     return () => clearTimeout(hideAreaPopup);
+    // }, []); // Execute when selectedArea changes
 
     useEffect(() => {
         let offset = 0;
@@ -157,6 +85,21 @@ const ForMobile = () => {
 
         fetchData();
     }, []);
+
+    useEffect(() => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const { latitude, longitude } = position.coords;
+                    setUserLocation({ lat: latitude, lng: longitude });
+                },
+                (error) => {
+                    console.error("Error getting current location", error);
+                }
+            );
+        }
+    }, []);
+
     const getMarkerIcon = (type) => {
         switch (type) {
             case "ev":
@@ -178,11 +121,28 @@ const ForMobile = () => {
         setFilteredStations(filtered);
     };
 
+    async function calculateRoute(lat, lng) {
+        // eslint-disable-next-line no-undef
+        const directionsService = new google.maps.DirectionsService();
+        const results = await directionsService.route({
+            origin: { lat: 35.362213, lng: -94.375338 },
+            destination: { lat: lat, lng: lng },
+            // eslint-disable-next-line no-undef
+            travelMode: google.maps.TravelMode.DRIVING,
+        });
+        setDirectionsResponse(results);
+        setDistance(results.routes[0].legs[0].distance.text);
+        setDuration(results.routes[0].legs[0].duration.text);
+    }
+
+    function clearRoute() {
+        setDirectionsResponse(null);
+        setDistance("");
+        setDuration("");
+    }
+
     return (
-        <APIProvider
-            apiKey={"AIzaSyDIj9ZhXRQX7XsTB14AhZvUcVItytgSYRc"}
-            onLoad={() => setLoading(false)} // Set loading to false when map loads
-        >
+        <div>
             {" "}
             {store.SidebarOpen && (
                 <motion.div
@@ -227,6 +187,7 @@ const ForMobile = () => {
                             </div>
                             {store.issearch && (
                                 <div className="w-[100vw] h-[7vh] flex flex-row justify-center items-center">
+                                    {/* <Autocomplete> */}
                                     <input
                                         className="w-[80%] h-[100%] m-2 bg-primary z-[1111] outline-none placeholder:text-[white] text-cosgreen"
                                         placeholder="Search for stations..."
@@ -238,6 +199,7 @@ const ForMobile = () => {
                                             }
                                         }}
                                     />
+                                    {/* </Autocomplete> */}
                                     <button className="w-[20%] h-[100%] z-[1111]">
                                         search
                                     </button>
@@ -252,8 +214,6 @@ const ForMobile = () => {
                                     key={index}
                                     className="p-2 border-b cursor-pointer"
                                     onClick={() => {
-                                        // Center the map on the selected station
-
                                         navigate(
                                             `/station/${parseInt(station.id)}`
                                         );
@@ -266,86 +226,102 @@ const ForMobile = () => {
                     )}
                 </div>
 
-                {loading ? ( // Conditionally render the loader
-                    <div className=" bg-white flex justify-center items-center h-full">
-                        <img src={spin} alt="" />
-                    </div>
-                ) : (
-                    <Map
-                        ref={map}
-                        className={`w-[100%]  ${
-                            store.issearch ? "h-[73%]" : "h-[80%]"
-                        }`}
-                        defaultZoom={13}
-                        defaultCenter={{ lat: 35.362213, lng: -94.375338 }}
-                        onCameraChanged={(ev) =>
-                            console.log(
-                                "camera changed:",
-                                ev.detail.center,
-                                "zoom:",
-                                ev.detail.zoom
-                            )
-                        }
-                    >
-                        {evStations
-                            .filter((station) =>
-                                station.stationName
-                                    .toLowerCase()
-                                    .includes(searchQuery.toLowerCase())
-                            )
-                            .map((station, index) => (
-                                <Marker
-                                    key={index}
-                                    position={{
-                                        lat: parseFloat(station.latitude),
-                                        lng: parseFloat(station.longitude),
-                                    }}
-                                    title={
-                                        station.stationName
-                                            ? station.stationName
-                                            : "Station Name Not Found"
-                                    }
-                                    options={{
-                                        icon: {
-                                            url: getMarkerIcon(station.type),
-                                            scaledSize: {
-                                                width: 32,
-                                                height: 32,
-                                            },
+                <GoogleMap
+                    ref={map}
+                    className={`w-[100%]  ${
+                        store.issearch ? "h-[73%]" : "h-[80%]"
+                    }`}
+                    zoom={13}
+                    center={{ lat: 35.362213, lng: -94.375338 }}
+                    options={{
+                        zoomControl: false,
+                        streetViewControl: false,
+                        mapTypeControl: false,
+                        fullscreenControl: false,
+                    }}
+                    gestureHandling="auto"
+                    mapContainerStyle={{
+                        width: "100%",
+                        height: `${store.issearch ? "73%" : "80%"}`,
+                    }}
+                    onLoad={(map) => setMap(map)}
+                >
+                    {evStations
+                        .filter((station) =>
+                            station.stationName
+                                .toLowerCase()
+                                .includes(searchQuery.toLowerCase())
+                        )
+                        .map((station, index) => (
+                            <Marker
+                                key={index}
+                                position={{
+                                    lat: parseFloat(station.latitude),
+                                    lng: parseFloat(station.longitude),
+                                }}
+                                title={
+                                    station.stationName
+                                        ? station.stationName
+                                        : "Station Name Not Found"
+                                }
+                                options={{
+                                    icon: {
+                                        url: getMarkerIcon(station.type),
+                                        scaledSize: {
+                                            width: 32,
+                                            height: 32,
                                         },
-                                    }}
-                                    onClick={() => {
-                                        // navigate(
-                                        //     `/station/${parseInt(station.id)}`
-                                        // );
-                                        setSelectedStation(
-                                            evStations.find(
-                                                (s) => s.id === station.id
-                                            )
-                                        );
-                                    }}
-                                ></Marker>
-                            ))}
-                    </Map>
-                )}
+                                    },
+                                }}
+                                onClick={() => {
+                                    // navigate(
+                                    //     `/station/${parseInt(station.id)}`
+                                    // );
+                                    setSelectedStation(
+                                        evStations.find(
+                                            (s) => s.id === station.id
+                                        )
+                                    );
+                                }}
+                            ></Marker>
+                        ))}
+
+                    {directionsResponse && (
+                        <DirectionsRenderer
+                            directions={directionsResponse}
+                            options={{
+                                polylineOptions: {
+                                    strokeColor: "red", // Change this to the desired color
+                                    strokeOpacity: 1.0,
+                                    strokeWeight: 5,
+                                },
+                                suppressMarkers: true,
+                                suppressInfoWindows: true,
+                            }}
+                        />
+                    )}
+                </GoogleMap>
+
                 {selectedStation && (
                     <AnimatePresence>
                         <Popup
                             station={selectedStation}
+                            distance={distance}
+                            duration={duration}
                             handledirection={() =>
-                                handleSearchResultClick(
-                                    selectedStation.longitude,
-                                    selectedStation.latitude
+                                calculateRoute(
+                                    parseFloat(selectedStation.latitude),
+                                    parseFloat(selectedStation.longitude)
                                 )
                             }
-                            handleremove={() => handleremovedirection()}
+                            handleremove={() => clearRoute()}
                             onClose={() => setSelectedStation(null)}
                         />
                     </AnimatePresence>
                 )}
                 <Navbar />
             </div>
-        </APIProvider>
+        </div>
     );
 };
 

@@ -4,7 +4,14 @@ import { motion } from "framer-motion";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 
-const Popup = ({ station, onClose, handledirection, handleremove }) => {
+const Popup = ({
+    station,
+    onClose,
+    distance,
+    duration,
+    handledirection,
+    handleremove,
+}) => {
     const navigate = useNavigate();
     return (
         <motion.div
@@ -43,7 +50,12 @@ const Popup = ({ station, onClose, handledirection, handleremove }) => {
                     >
                         {station.stationAddress}
                     </motion.p>
+                    <div>
+                    <p>{distance}</p>
+                    <p>{duration}</p>
                 </div>
+                </div>
+               
                 <button onClick={handledirection}>directions</button>
                 <button
                     onClick={() => {
