@@ -53,7 +53,7 @@ const App = () => {
             <Route path="/station/:stationId" element={<StationDetail />} />
             <Route path="/bookmark" element={<Bookmark />} />
             <Route path="/chat" element={<Chat />}></Route>
-            <Route path="/privacy&policy" element={<Privacy />}></Route>
+            <Route path="/privacy" element={<Privacy />}></Route>
         </Routes>
         //
     );
