@@ -14,13 +14,10 @@ const Popup = ({
 }) => {
     const navigate = useNavigate();
     return (
-        <motion.div
+        <div
             id="toggle"
             key={station.stationName}
-            initial={{ opacity: 0, y: -50 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -50 }}
-            transition={{ duration: 0.3 }}
+          
             className={`fixed  bottom-0 left-0 w-full ${
                 station.type === "ev" ? "bg-cosgreen" : "bg-blue-500"
             } p-4 z-50 shadow-lg text-white `}
@@ -67,7 +64,7 @@ const Popup = ({
                     Close
                 </button>
             </div>
-        </motion.div>
+        </div>
     );
 };
 

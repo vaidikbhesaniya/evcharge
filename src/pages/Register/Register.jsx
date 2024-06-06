@@ -26,12 +26,7 @@ export const Register = () => {
     };
 
     return (
-        <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="w-screen h-[100dvh] border-solid "
-        >
+        <div className="w-screen h-[100dvh] border-solid ">
             <div className=" w-full h-[20%] bg-white flex flex-row justify-around items-center">
                 <img src={evcharge} alt="" />
             </div>
@@ -93,6 +88,6 @@ export const Register = () => {
                     </form>
                 </div>
             </div>
-        </motion.div>
+        </div>
     );
 };

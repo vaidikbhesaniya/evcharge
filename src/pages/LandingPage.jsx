@@ -3,8 +3,7 @@ import { Link } from "react-router-dom";
 import carcharge from "../assets/charging.png";
 import map from "../assets/map.png";
 import { motion } from "framer-motion";
-import { Store } from "../store/store";
-import { useEffect } from "react";
+
 const LandingPage = () => {
     // const store = Store();
 
@@ -16,11 +15,9 @@ const LandingPage = () => {
     // }, []);
 
     return (
-        <motion.div
+        <div
             className="bg-primary w-screen h-[100dvh]"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            
         >
             <div className="w-full h-[43%] m-auto overflow-hidden">
                 <img src={car} alt="" className="" />
@@ -75,7 +72,7 @@ const LandingPage = () => {
                     </motion.div>
                 </div>
             </div>
-        </motion.div>
+        </div>
     );
 };
 export default LandingPage;

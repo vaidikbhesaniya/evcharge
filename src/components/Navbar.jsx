@@ -46,10 +46,8 @@ function Navbar() {
     }, []);
 
     return (
-        <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+        <div
+           
             className="w-full h-[10%] rounded-t-sm bg-primary flex flex-row justify-around items-center    bottom-0"
         >
             {nav.map((item, index) =>
@@ -104,7 +102,7 @@ function Navbar() {
                     </div>
                 )
             )}
-        </motion.div>
+        </div>
     );
 }
 

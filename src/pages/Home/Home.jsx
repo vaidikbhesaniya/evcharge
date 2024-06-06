@@ -25,7 +25,6 @@ import back from "../../assets/profile/back.png";
 import petrolmarker from "../../assets/petrolmarker.png";
 
 const Home = () => {
- 
     const store = Store();
     const navigate = useNavigate();
     const stations = JSON.parse(localStorage.getItem("stations"));
@@ -537,12 +536,7 @@ const Home = () => {
         return () => clearTimeout(hideAreaPopup);
     }, [selectedArea]); // Execute when selectedArea changes
     return (
-        <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className=" w-screen h-[100dvh] bg-cosgreen relative"
-        >
+        <div className=" w-screen h-[100dvh] bg-cosgreen relative">
             {store.allstation && (
                 <div className="w-[100dvw] h-[100dvh] bg-coswhite fixed z-[1111111]">
                     <div className="w-full h-[7%] bg-cosgreen flex items-center">
@@ -760,70 +754,70 @@ const Home = () => {
                         </div>
                     </motion.div>
                 ) : ( */}
+                <div
+                    className={`w-full h-[40%] flex justify-center items-center  absolute bottom-0 ${
+                        isactivesearch ? "z-[11]" : "z-[-11]"
+                    }  `}
+                >
                     <div
-                        className={`w-full h-[40%] flex justify-center items-center  absolute bottom-0 ${
-                            isactivesearch ? "z-[11]" : "z-[-11]"
-                        }  `}
+                        id="slider"
+                        className="w-full h-full overflow-x-scroll scroll whitespace-nowrap scroll-smooth scrollbar-hide "
                     >
-                        <div
-                            id="slider"
-                            className="w-full h-full overflow-x-scroll scroll whitespace-nowrap scroll-smooth scrollbar-hide "
-                        >
-                            {isactivesearch &&
-                                searchResults &&
-                                searchResults?.map((item, key) => (
-                                    <motion.div
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        exit={{ opacity: 0 }}
-                                        key={key}
-                                        className="w-[70%] h-[90%] text-white inline-block  cursor-pointer hover:scale-105 ease-in-out duration-300 bg-cosgreen m-2 p-3 rounded-2xl justify-center items-center mt-3"
-                                    >
-                                        <div className="w-full h-full flex-col flex justify-center items-center">
-                                            <div className="w-[95%] h-[70%]  rounded-2xl mb-2 overflow-hidden justify-center items-center flex">
-                                                <img
-                                                    onClick={() =>
-                                                        navigate(
-                                                            `/station/${item.id}`
-                                                        )
-                                                    }
-                                                    src={car}
-                                                    alt=""
-                                                    className="w-[150px]"
-                                                />
-                                            </div>
-                                            <div className="w-[95%] h-[20%]  text-[10px] flex flex-row">
-                                                <div
-                                                    className="flex flex-col w-[80%] h-full
+                        {isactivesearch &&
+                            searchResults &&
+                            searchResults?.map((item, key) => (
+                                <motion.div
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    key={key}
+                                    className="w-[70%] h-[90%] text-white inline-block  cursor-pointer hover:scale-105 ease-in-out duration-300 bg-cosgreen m-2 p-3 rounded-2xl justify-center items-center mt-3"
+                                >
+                                    <div className="w-full h-full flex-col flex justify-center items-center">
+                                        <div className="w-[95%] h-[70%]  rounded-2xl mb-2 overflow-hidden justify-center items-center flex">
+                                            <img
+                                                onClick={() =>
+                                                    navigate(
+                                                        `/station/${item.id}`
+                                                    )
+                                                }
+                                                src={car}
+                                                alt=""
+                                                className="w-[150px]"
+                                            />
+                                        </div>
+                                        <div className="w-[95%] h-[20%]  text-[10px] flex flex-row">
+                                            <div
+                                                className="flex flex-col w-[80%] h-full
                                             "
-                                                >
-                                                    <p className="">
-                                                        {item.stationName}
-                                                    </p>
-                                                    <p className=" truncate">
-                                                        {item.stationAddress}
-                                                    </p>
-                                                </div>
-                                                <div className="flex flex-col w-[20%] justify-center items-center text-[20px]">
-                                                    <div className="bg-coswhite w-[40px] h-[40px] rounded-full">
-                                                        <img
-                                                            onClick={() =>
-                                                                handleSearchResultClick(
-                                                                    item.longitude,
-                                                                    item.latitude
-                                                                )
-                                                            }
-                                                            src={directiongreen}
-                                                            alt=""
-                                                        />
-                                                    </div>
+                                            >
+                                                <p className="">
+                                                    {item.stationName}
+                                                </p>
+                                                <p className=" truncate">
+                                                    {item.stationAddress}
+                                                </p>
+                                            </div>
+                                            <div className="flex flex-col w-[20%] justify-center items-center text-[20px]">
+                                                <div className="bg-coswhite w-[40px] h-[40px] rounded-full">
+                                                    <img
+                                                        onClick={() =>
+                                                            handleSearchResultClick(
+                                                                item.longitude,
+                                                                item.latitude
+                                                            )
+                                                        }
+                                                        src={directiongreen}
+                                                        alt=""
+                                                    />
                                                 </div>
                                             </div>
                                         </div>
-                                    </motion.div>
-                                ))}
-                        </div>
+                                    </div>
+                                </motion.div>
+                            ))}
                     </div>
+                </div>
                 {/* )} */}
                 <div
                     onClick={() => store.setallstation(!store.allstation)}
@@ -890,7 +884,7 @@ const Home = () => {
             </motion.div>
 
             <Navbar />
-        </motion.div>
+        </div>
     );
 };
 

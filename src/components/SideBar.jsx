@@ -73,10 +73,8 @@ export default function SideBar() {
         },
     ];
     return (
-        <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+        <div
+           
             className="w-[70dvw]  h-[100dvh] fixed bg-primary z-30 rounded-r-xl"
         >
             <div className="w-full h-[20%] flex justify-center items-center flex-col">
@@ -173,7 +171,7 @@ export default function SideBar() {
                     </AlertDialog>
                 </div>
             </div>
-        </motion.div>
+        </div>
     );
 }
 

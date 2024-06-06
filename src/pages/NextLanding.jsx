@@ -9,10 +9,8 @@ import vd from "../assets/greenthird.mp4";
 import { Link } from "react-router-dom";
 export const NextLanding = () => {
     return (
-        <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+        <div
+            
             className="w-screen h-[100dvh] "
         >
             <video loop autoPlay muted id="bg-v">
@@ -97,6 +95,6 @@ export const NextLanding = () => {
                     </p>
                 </Link>
             </div>
-        </motion.div>
+        </div>
     );
 };

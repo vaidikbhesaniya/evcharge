@@ -1,17 +1,13 @@
-import React from "react";
-import { motion } from "framer-motion";
+
 
 import PropTypes from "prop-types";
 
 function AreaPopup({ data, onClose }) {
     return (
-        <motion.div
+        <div
             id="toggle"
             key={data}
-            initial={{ opacity: 0, y: -50 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -50 }}
-            transition={{ duration: 0.3 }}
+         
             className="fixed bottom-0 left-0 w-full bg-white p-4 z-50 shadow-lg"
         >
             <div className="flex justify-between items-center">
@@ -41,7 +37,7 @@ function AreaPopup({ data, onClose }) {
                     Close
                 </button>
             </div>
-        </motion.div>
+        </div>
     );
 }
 

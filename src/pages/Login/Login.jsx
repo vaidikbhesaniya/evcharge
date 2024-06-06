@@ -30,10 +30,8 @@ export const Login = () => {
     };
 
     return (
-        <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+        <div
+           
             className="w-screen h-[100dvh] border-solid "
         >
             <div className=" w-full h-[20%] bg-white flex flex-row justify-around items-center">
@@ -82,6 +80,6 @@ export const Login = () => {
                     </form>
                 </div>
             </div>
-        </motion.div>
+        </div>
     );
 };

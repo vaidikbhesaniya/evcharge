@@ -65,10 +65,8 @@ function Profile() {
         }
     }
     return (
-        <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+        <div
+            
             className="w-screen h-[100dvh] border-solid"
         >
             <div
@@ -116,14 +114,8 @@ function Profile() {
                 </div>
 
                 {isediting ? (
-                    <motion.div
-                        initial={{ x: 0, opacity: 0 }}
-                        animate={{ x: 0, opacity: 1 }}
-                        transition={{
-                            type: "spring",
-                            stiffness: 260,
-                            damping: 20,
-                        }}
+                    <div
+                     
                         className="w-full h-[90%]  bg-grad "
                     >
                         <div className="w-full h-[30%] p-5 flex flex-col gap-4 ">
@@ -210,7 +202,7 @@ function Profile() {
                                 </div>
                             </form>
                         </div>
-                    </motion.div>
+                    </div>
                 ) : (
                     <motion.div
                         initial={{ x: 0, opacity: 0 }}
@@ -304,7 +296,7 @@ function Profile() {
                 )}
             </div>
             <Navbar />
-        </motion.div>
+        </div>
     );
 }
 

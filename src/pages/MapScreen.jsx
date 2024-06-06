@@ -155,10 +155,8 @@ const MapScreen = () => {
     //     }
     // };
     return (
-        <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+        <div
+           
             className="w-screen h-screen bg-cosgreen"
         >
             <div className="w-[100%] h-[100%]">
@@ -205,7 +203,7 @@ const MapScreen = () => {
                     </button>
                 )}
             </div>
-        </motion.div>
+        </div>
     );
 };
 
