@@ -46,6 +46,18 @@ const ForMobile = () => {
     }, []);
 
     useEffect(() => {
+        // if (store.user) {
+        //     navigate("/home");
+        // }
+        // store.get
+        // console.log(store.user);
+
+        async function datafetch() {
+            await store.getUser(navigate);
+        }
+        datafetch();
+    }, []);
+    useEffect(() => {
         let offset = 0;
 
         async function fetchData() {

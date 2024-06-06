@@ -18,25 +18,10 @@ import AllStations from "./pages/AllStations/AllStations";
 import Bookmark from "./pages/Bookmark/Bookmark";
 import Chat from "./pages/Chat";
 import ForMobile from "./pages/Home/ForMobile";
-import Privacy from "./pages/Profile/Profile";
+import Privacy from "./pages/Privacy/Privacy";
 
 const App = () => {
-    const store = Store();
-    const navigate = useNavigate();
-
-    const location = useLocation();
-    useEffect(() => {
-        // if (store.user) {
-        //     navigate("/home");
-        // }
-        // store.get
-        // console.log(store.user);
-
-        async function datafetch() {
-            await store.getUser(navigate);
-        }
-        datafetch();
-    }, []);
+   
 
     return (
         <Routes>
