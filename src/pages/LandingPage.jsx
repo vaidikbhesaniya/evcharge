@@ -3,9 +3,12 @@ import { Link } from "react-router-dom";
 import carcharge from "../assets/charging.png";
 import map from "../assets/map.png";
 import { motion } from "framer-motion";
-
+import { useEffect } from "react";
+import { Store } from "../store/store";
+import { useNavigate } from "react-router-dom";
 const LandingPage = () => {
-    // const store = Store();
+    const store = Store();
+    const navigate = useNavigate();
 
     // useEffect(() => {
     //     async function fetchData() {
@@ -13,12 +16,20 @@ const LandingPage = () => {
     //     }
     //     fetchData();
     // }, []);
+    useEffect(() => {
+        // if (store.user) {
+        //     navigate("/home");
+        // }
+        // store.get
+        // console.log(store.user);
 
+        async function datafetch() {
+            await store.getUser(navigate);
+        }
+        datafetch();
+    }, []);
     return (
-        <div
-            className="bg-primary w-screen h-[100dvh]"
-            
-        >
+        <div className="bg-primary w-screen h-[100dvh]">
             <div className="w-full h-[43%] m-auto overflow-hidden">
                 <img src={car} alt="" className="" />
             </div>

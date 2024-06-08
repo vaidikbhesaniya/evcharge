@@ -128,11 +128,7 @@ export const Store = create((set) => ({
                 Store.getState().handleGetstations();
                 redirect("/Home");
             })
-            .catch((err) => {
-                if (err.response)
-                    return toast.error(err.response?.data?.message);
-                return toast.error("Internal server error");
-            })
+            .catch(() => {})
             .finally(() => {
                 // set({ isLoading: false });
             });

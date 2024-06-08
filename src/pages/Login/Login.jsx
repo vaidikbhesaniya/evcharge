@@ -23,6 +23,7 @@ export const Login = () => {
             },
             navigate
         );
+        localStorage.setItem("loginData", JSON.stringify(loginData));
         setLoginData({
             email: "",
             password: "",
@@ -30,10 +31,7 @@ export const Login = () => {
     };
 
     return (
-        <div
-           
-            className="w-screen h-[100dvh] border-solid "
-        >
+        <div className="w-screen h-[100dvh] border-solid ">
             <div className=" w-full h-[20%] bg-white flex flex-row justify-around items-center">
                 <img src={evcharge} alt="" />
             </div>
