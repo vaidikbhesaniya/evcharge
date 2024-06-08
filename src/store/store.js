@@ -147,8 +147,6 @@ export const Store = create((set) => ({
                 })
                 .catch((err) => {
                     navigate("/");
-                    if (err.response)
-                        return toast.error(err.response?.data?.message);
                 })
                 .finally(() => {
                     // set({ isLoading: false });
