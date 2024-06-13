@@ -1,9 +1,8 @@
 import Navbar from "../../components/Navbar";
-import station_data from "../../lib/stations";
+import station_data from "../../lib/stationsdata";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import petrolmarker from "../../assets/petrolmarker.png";
-
 import "@maptiler/sdk/dist/maptiler-sdk.css";
 import mapmarker from "../../assets/mapmarker.png";
 import logo from "../../assets/logo.png";
@@ -40,7 +39,7 @@ const ForMobile = () => {
 
     useEffect(() => {
         const filteredEVStations = station_data.filter(
-            (station) => station.type === "ev"
+            (station) => station.category == "ev"
         );
         setEvStations(filteredEVStations);
     }, []);
@@ -62,7 +61,7 @@ const ForMobile = () => {
 
         async function fetchData() {
             const intervalId = setInterval(() => {
-                if (offset > 2800) {
+                if (offset > 7000) {
                     clearInterval(intervalId);
                     console.log("Offset limit reached, stopping the interval.");
                     return;
@@ -75,19 +74,19 @@ const ForMobile = () => {
         fetchData();
     }, []);
 
-    useEffect(() => {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const { latitude, longitude } = position.coords;
-                    setUserLocation({ lat: latitude, lng: longitude });
-                },
-                (error) => {
-                    console.error("Error getting current location", error);
-                }
-            );
-        }
-    }, []);
+    // useEffect(() => {
+    //     if (navigator.geolocation) {
+    //         navigator.geolocation.getCurrentPosition(
+    //             (position) => {
+    //                 const { latitude, longitude } = position.coords;
+    //                 setUserLocation({ lat: latitude, lng: longitude });
+    //             },
+    //             (error) => {
+    //                 console.error("Error getting current location", error);
+    //             }
+    //         );
+    //     }
+    // }, []);
 
     const getMarkerIcon = (type) => {
         switch (type) {

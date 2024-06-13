@@ -1,8 +1,6 @@
-import React from "react";
 import { motion } from "framer-motion";
 import { Store } from "../store/store";
 import Bookmark from "../assets/Bookmark.png";
-
 import premium from "../assets/sidebar/premium.png";
 import addcharging from "../assets/sidebar/addcharging.png";
 import form from "../assets/sidebar/form.png";
@@ -36,11 +34,11 @@ export default function SideBar() {
             path: "/bookmark",
             icon: Bookmark,
         },
-        {
-            title: "Premium",
-            path: "/Premium",
-            icon: premium,
-        },
+        // {
+        //     title: "Premium",
+        //     path: "/Premium",
+        //     icon: premium,
+        // },
         {
             title: "Add Ev Station",
             path: "/login",
@@ -56,11 +54,11 @@ export default function SideBar() {
             path: "/chat",
             icon: share,
         },
-        {
-            title: "Rate",
-            path: "/Rate",
-            icon: rate,
-        },
+        // {
+        //     title: "Rate",
+        //     path: "/Rate",
+        //     icon: rate,
+        // },
         {
             title: "Consent Form",
             path: "/",
