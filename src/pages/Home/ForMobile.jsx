@@ -39,7 +39,7 @@ const ForMobile = () => {
 
     useEffect(() => {
         const filteredEVStations = station_data.filter(
-            (station) => station.category == "ev"
+            (station) => station.type == "ev"
         );
         setEvStations(filteredEVStations);
     }, []);
